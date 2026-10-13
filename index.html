@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -434,7 +434,7 @@
         <li><a href="#paso2">2. Proyecto</a></li>
         <li><a href="#paso3">3. Arranque</a></li>
         <li><a href="#paso4">4. Panel DPRH</a></li>
-        <li><a href="#paso5">5. GitHub & Llaves</a></li>
+        <li><a href="#paso5">5. GitHub & Llaves</a></li><li><a href="#paso6">6. Red Local (LAN)</a></li>
       </ul>
     </div>
   </header>
@@ -740,7 +740,69 @@
       </ol>
     </article>
 
-    <!-- BLOQUE 6: CHECKLIST FINAL -->
+        <!-- BLOQUE 6: CONEXIÓN LOCAL PARA OTRAS COMPUTADORAS (LAN) -->
+    <article class="section-card" id="paso6">
+      <div class="section-header">
+        <div class="section-number">6</div>
+        <div>
+          <h2 class="section-title">Conexión en Red Local (LAN) para Otras Computadoras</h2>
+          <p class="section-desc">Cómo permitir que los equipos de la oficina accedan al sistema de forma directa.</p>
+        </div>
+      </div>
+
+      <p>
+        Para que las demás computadoras conectadas a la misma red de la oficina puedan ingresar al sistema, existen <strong>2 opciones muy sencillas</strong>. En Recursos Hídricos las direcciones IP suelen estar configuradas de manera estática/fija (por ejemplo: <code>https://192.168.100.38:8000</code> o a través del dominio <code>https://recursoshidricos.local:8000</code>):
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 1.5rem 0;">
+        
+        <!-- Opción 1: Acceso Directo del Navegador -->
+        <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 20px;">
+          <h3 style="font-size: 1.15rem; font-weight: 700; color: #0284c7; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px;">
+            🌐 Opción 1: Acceso Directo en el Navegador del Cliente
+          </h3>
+          <p style="font-size: 0.93rem; color: #334155; margin-bottom: 1rem;">
+            En cualquier otra computadora de la misma red, puede crear un acceso directo en el escritorio para que el usuario ingrese con un solo clic:
+          </p>
+          <ol class="numbered-list" style="margin-left: 1.25rem; font-size: 0.9rem;">
+            <li>Haga clic derecho en el <strong>Escritorio</strong> de la PC cliente &gt; <em>Nuevo</em> &gt; <strong>Acceso directo</strong>.</li>
+            <li>En la casilla de ubicación, escriba la dirección con la IP estática del servidor (ejemplo: <code>https://192.168.100.38:8000</code> o <code>https://recursoshidricos.local:8000</code>).</li>
+            <li>Haga clic en <strong>Siguiente</strong>, asígnele el nombre <strong>"Sistema Recursos Hídricos"</strong> y presione <strong>Finalizar</strong>.</li>
+            <li>Al abrirlo, se iniciará el navegador web cargando inmediatamente el sistema.</li>
+          </ol>
+        </div>
+
+        <!-- Opción 2: Archivo .BAT Automatizado -->
+        <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 20px;">
+          <h3 style="font-size: 1.15rem; font-weight: 700; color: #0369a1; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px;">
+            ⚡ Opción 2: Archivo ejecutable .BAT en la PC Cliente
+          </h3>
+          <p style="font-size: 0.93rem; color: #334155; margin-bottom: 1rem;">
+            Puede generar un archivo lanzador rápido para las máquinas clientes que abra automáticamente su navegador predeterminado:
+          </p>
+          <ol class="numbered-list" style="margin-left: 1.25rem; font-size: 0.9rem;">
+            <li>Cree un archivo de texto con el Bloc de notas llamado <code>Abrir_Recursos_Hidricos.bat</code>.</li>
+            <li>Copie y pegue adentro la siguiente línea con la IP fija del servidor:</li>
+          </ol>
+          <div style="background-color: #0f172a; color: #e2e8f0; padding: 10px 14px; border-radius: 6px; font-family: monospace; font-size: 0.88rem; margin: 8px 0;">
+            start https://192.168.100.38:8000
+          </div>
+          <p style="font-size: 0.88rem; color: #64748b; margin-top: 6px;">
+            <em>(O use <code>start https://recursoshidricos.local:8000</code> según la configuración de la red).</em>
+          </p>
+        </div>
+
+      </div>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div>
+          <strong>Nota de certificados en la red interna:</strong> La primera vez que una máquina cliente ingrese por <code>https://</code>, el navegador puede mostrar un aviso de certificado autofirmado local. Solo deben presionar <em>"Configuración avanzada"</em> y luego <em>"Continuar a 192.168.100.38 (sitio no seguro)"</em>. Esto es completamente normal en redes internas protegidas por HTTPS local.
+        </div>
+      </div>
+    </article>
+
+    <!-- BLOQUE 7: CHECKLIST FINAL -->
     <article class="section-card">
       <div class="section-header">
         <div class="section-number">✓</div>
