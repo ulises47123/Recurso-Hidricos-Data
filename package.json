@@ -1,0 +1,54 @@
+{
+  "name": "gestion-personal-recursos-hidricos",
+  "version": "2.0.0",
+  "description": "Sistema Desktop de Gestión de Personal y Recursos Hídricos con Python, SQLite y Electron",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron electron/main.js",
+    "backend": ".\\venv\\Scripts\\python backend/main.py",
+    "seed": ".\\venv\\Scripts\\python -m backend.services.seed_data",
+    "pack": "electron-builder --dir",
+    "dist:win64": "electron-builder --win --x64",
+    "dist:win32": "electron-builder --win --ia32",
+    "dist": "electron-builder --win --x64 --ia32"
+  },
+  "keywords": [
+    "recursos-hidricos",
+    "electron",
+    "python",
+    "fastapi",
+    "sqlite"
+  ],
+  "author": "Recursos Hídricos",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^33.2.1"
+  },
+  "dependencies": {
+    "jquery": "^4.0.0",
+    "select2": "^4.0.13"
+  },
+  "build": {
+    "appId": "com.recursoshidricos.gestionpersonal",
+    "productName": "Gestion Personal - Recursos Hidricos",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64", "ia32"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64", "ia32"]
+        }
+      ],
+      "requestedExecutionLevel": "requireAdministrator",
+      "icon": "frontend/img/logo.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}

@@ -1,0 +1,1906 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="vendor/select2.min.css">
+  <link rel="stylesheet" href="css/style.css?v=2.8">
+</head>
+<body>
+
+  <!-- ========================================================= -->
+  <!-- MODAL / PANTALLA DE INICIO DE SESIÓN (LOGIN)              -->
+  <!-- ========================================================= -->
+  <div id="login-overlay" style="position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); z-index: 99999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div style="background: #ffffff; width: 100%; max-width: 420px; padding: 32px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); text-align: center;">
+      <img src="img/logo.png" alt="Logo DPRH" style="height: 64px; width: auto; margin-bottom: 12px;">
+      <h2 style="font-size: 20px; font-weight: 700; color: #0f2444; margin-bottom: 4px;">Recursos Hídricos</h2>
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 24px;">Control de Acceso y Gestión de Personal</p>
+
+      <div id="login-error-msg" style="display: none; background: #fef2f2; color: #ef4444; border: 1px solid #fca5a5; padding: 10px; border-radius: 6px; font-size: 12.5px; margin-bottom: 16px; text-align: left;"></div>
+
+      <form id="form-login-sistema" onsubmit="ejecutarLogin(event)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        <div style="text-align: left; margin-bottom: 16px;">
+          <label style="display: block; font-size: 12.5px; font-weight: 600; color: #334155; margin-bottom: 6px;">Nombre de Usuario</label>
+          <input type="text" id="login-username" name="login_user_field" class="form-control" required autocomplete="username" autocorrect="off" autocapitalize="off" spellcheck="false" style="width: 100%; padding: 10px;">
+        </div>
+        <div style="text-align: left; margin-bottom: 24px;">
+          <label style="display: block; font-size: 12.5px; font-weight: 600; color: #334155; margin-bottom: 6px;">Contraseña</label>
+          <div style="position: relative; display: flex; align-items: center;">
+            <input type="password" id="login-password" name="login_pass_field" class="form-control" required autocomplete="current-password" style="width: 100%; padding: 10px 40px 10px 10px;">
+            <button type="button" class="pw-toggle-btn"
+                    onpointerdown="startPasswordReveal('login-password', this)"
+                    onpointerup="endPasswordReveal('login-password', this)"
+                    onpointerleave="endPasswordReveal('login-password', this)"
+                    onpointercancel="endPasswordReveal('login-password', this)"
+                    title="Mantener presionado para ver contraseña">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
+            </button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z" /><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" /><path d="M8 11v-4a4 4 0 0 1 8 0v4" /></svg>
+          <span>Iniciar Sesión</span>
+        </button>
+      </form>
+      <p style="font-size: 11px; color: #94a3b8; margin-top: 20px;">Acceso restringido • Sistema de Gestión Provincial DPRH</p>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- SIDEBAR CON LOS 10 MÓDULOS DEL PROYECTO                   -->
+  <!-- ========================================================= -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <img src="img/logo.png" alt="Logo Recursos Hídricos" class="sidebar-logo-img">
+      <div class="sidebar-brand-text">
+        <h2>Recursos Hídricos</h2>
+        <span>Gestión de Personal</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <!-- 1. Inicio (Dashboard) -->
+      <button class="nav-item active" data-target="tab-dashboard">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        <span>1. Inicio </span>
+      </button>
+
+      <!-- 2. Personal -->
+      <button class="nav-item" data-target="tab-personal">
+        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        <span>2. Personal</span>
+      </button>
+
+      <!-- 3. Licencias -->
+      <button class="nav-item" data-target="tab-licencias">
+        <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+        <span>3. Licencias</span>
+      </button>
+
+      <!-- 4. Compensatorios -->
+      <button class="nav-item" data-target="tab-compensatorios">
+        <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+        <span>4. Compensatorios</span>
+      </button>
+
+      <!-- 5. Cargar datos -->
+      <button class="nav-item" data-target="tab-cargar-datos">
+        <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        <span>5. Cargar Datos</span>
+      </button>
+
+      <!-- 6. Importar Excel -->
+      <button class="nav-item" data-target="tab-importar-excel">
+        <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>
+        <span>6. Importar Excel</span>
+      </button>
+
+      <!-- 7. Exportar Excel -->
+      <button class="nav-item" data-target="tab-exportar-excel">
+        <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        <span>7. Exportar Excel</span>
+      </button>
+
+      <!-- 8. Organigrama -->
+      <button class="nav-item" data-target="tab-organigrama">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        <span>8. Organigrama</span>
+      </button>
+
+      <!-- 9. Papelera -->
+      <button class="nav-item" data-target="tab-papelera">
+        <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+        <span>9. Papelera</span>
+        <span class="badge-count" id="badge-papelera-count" style="display: none;">0</span>
+      </button>
+
+      <!-- 10. Configuración e Instructivo -->
+      <button class="nav-item" data-target="tab-config" data-permiso="admin">
+        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+        <span>10. Configuración</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div style="color: var(--success); font-weight: bold;">● Online</div>
+    </div>
+  </aside>
+
+  <!-- ========================================================= -->
+  <!-- ÁREA DE CONTENIDO PRINCIPAL                               -->
+  <!-- ========================================================= -->
+  <main class="main-wrapper">
+    <header class="top-header">
+      <div class="header-title">
+        <h1>Sistema de Gestión de Personal y Recursos Hídricos</h1>
+        <p>Organismo Público Provincial • Entorno de Escritorio con Base de Datos Relacional</p>
+      </div>
+      <!-- Widget de Usuario Activo y Cierre de Sesión -->
+      <div id="user-profile-badge" style="display: flex; align-items: center; gap: 12px; background: #f1f5f9; padding: 6px 14px; border-radius: 20px; border: 1px solid #cbd5e1;">
+          <svg class="icon-svg" viewBox="0 0 24 24" style="font-size: 16px; color: var(--primary);"><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg>
+          <div style="text-align: left;">
+            <div id="user-display-name" style="font-size: 13px; font-weight: 700; color: #0f2444;">Administrador</div>
+            <div id="user-display-role" style="font-size: 10.5px; color: var(--primary-light); text-transform: uppercase; font-weight: 600;">Administrador General</div>
+          </div>
+          <button onclick="cerrarSesion()" class="btn btn-outline btn-sm" style="margin-left: 6px; padding: 4px 10px; font-size: 11.5px; border-color: #cbd5e1; color: #64748b; display: inline-flex; align-items: center; gap: 4px;" title="Cerrar Sesión">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" /><path d="M9 12h12l-3 -3" /><path d="M18 15l3 -3" /></svg>
+            <span>Salir</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-area">
+
+      <!-- ===================================================== -->
+      <!-- PESTAÑA 1: INICIO (DASHBOARD)                         -->
+      <!-- ===================================================== -->
+      <section id="tab-dashboard" class="tab-pane active">
+        <div class="stats-grid">
+          <div class="stat-card" onclick="switchTab('tab-personal')" style="cursor: pointer;" title="Ir a nómina completa de Personal">
+            <div class="stat-icon blue">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            </div>
+            <div class="stat-details">
+              <h3 id="kpi-total-personal">0</h3>
+              <p>Total de Personal</p>
+            </div>
+          </div>
+
+          <div class="stat-card" onclick="switchTab('tab-personal')" style="cursor: pointer;" title="Ver agentes en servicio activo">
+            <div class="stat-icon green">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            </div>
+            <div class="stat-details">
+              <h3 id="kpi-activos">0</h3>
+              <p>Agentes en Servicio Activo</p>
+            </div>
+          </div>
+
+          <div class="stat-card" onclick="switchTab('tab-licencias')" style="cursor: pointer;" title="Ir a control de Licencias Médicas">
+            <div class="stat-icon yellow">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+            </div>
+            <div class="stat-details">
+              <h3 id="kpi-en-licencia">0</h3>
+              <p>Agentes en Licencia Médica</p>
+            </div>
+          </div>
+
+          <div class="stat-card" onclick="switchTab('tab-licencias'); switchSubtabLicencias('todas');" style="cursor: pointer;" title="Ver certificados pendientes de auditoría">
+            <div class="stat-icon purple">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            </div>
+            <div class="stat-details">
+              <h3 id="kpi-licencias-pendientes">0</h3>
+              <p>Certificados Pendientes de Auditoría</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+          <!-- Gráfico Revista -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Distribución por Situación de Revista</div>
+            </div>
+            <canvas id="chart-revista" width="450" height="200"></canvas>
+          </div>
+
+          <!-- Gráfico Áreas -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Personal por Área Operativa</div>
+            </div>
+            <canvas id="chart-area" width="450" height="200"></canvas>
+          </div>
+        </div>
+
+        <!-- Panel de Novedades Diarias (Módulo 4 Requerimiento 4) -->
+        <div class="card" style="margin-bottom: 20px; border-left: 4px solid var(--primary);">
+          <div class="card-header">
+            <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+              <svg class="icon-svg" viewBox="0 0 24 24" style="color: var(--primary);"><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" /><path d="M16 3v4" /><path d="M8 3v4" /><path d="M4 11h16" /></svg>
+              <span>Novedades Diarias — Ausencias de la Jornada</span>
+              <span id="fecha-novedades-hoy" style="font-size: 13px; font-weight: normal; color: var(--text-muted);"></span>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="loadDashboard()">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></svg>
+              <span>Actualizar</span>
+            </button>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div>
+              <h4 style="font-size: 13px; font-weight: bold; color: var(--danger); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M5 17h-2v-11a1 1 0 0 1 1 -1h9v12m-4 0h6m4 0h2v-6h-2.5a1.5 1.5 0 0 1 -1.5 -1.5v-3.5h-2" /><path d="M9 8h4m-2 -2v4" /><path d="M19 12m-2 0a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /></svg>
+                <span>Licencias / Partes Médicos Activos Hoy</span>
+              </h4>
+              <table class="custom-table" style="font-size: 12px;">
+                <thead>
+                  <tr>
+                    <th>Agente</th>
+                    <th>Área</th>
+                    <th>Tipo Licencia</th>
+                    <th>Rango Fechas</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-dash-novedades-medicas"></tbody>
+              </table>
+            </div>
+            <div>
+              <h4 style="font-size: 13px; font-weight: bold; color: var(--primary); margin-bottom: 8px;">⏰ Compensatorios Vigentes Hoy</h4>
+              <table class="custom-table" style="font-size: 12px;">
+                <thead>
+                  <tr>
+                    <th>Agente</th>
+                    <th>Área</th>
+                    <th>Fechas</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-dash-novedades-compensatorios"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <!-- Licencias Recientes -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Últimas Licencias y Certificados Médicos</div>
+              <button class="btn btn-outline btn-sm" onclick="switchTab('tab-licencias')">Ver Todas</button>
+            </div>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Agente</th>
+                  <th>Tipo</th>
+                  <th>Período</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-dash-licencias"></tbody>
+            </table>
+          </div>
+
+          <!-- Auditoría Reciente -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Registro de Auditoría y Seguridad</div>
+              <button class="btn btn-outline btn-sm" onclick="switchTab('tab-config')" data-permiso="admin">Ver Logs</button>
+            </div>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Fecha/Hora</th>
+                  <th>Usuario</th>
+                  <th>Acción</th>
+                  <th>Detalle</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-dash-actividad"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================== -->
+      <!-- PESTAÑA 2: PERSONAL                                   -->
+      <!-- ===================================================== -->
+      <section id="tab-personal" class="tab-pane">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Nómina General de Personal de Recursos Hídricos</div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-accent" onclick="descargarPDFNomina()" style="display: inline-flex; align-items: center; gap: 6px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
+                <span>Nómina en PDF</span>
+              </button>
+              <button class="btn btn-primary" onclick="switchTab('tab-cargar-datos')" style="display: inline-flex; align-items: center; gap: 6px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+                <span>Cargar Nuevo Empleado</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="search-bar-wrapper">
+            <input type="text" id="search-personal" class="form-control" placeholder="Buscar por nombre, apellido, DNI, legajo o función..." style="min-width: 320px;">
+            <select id="filter-personal-area" class="form-control" style="max-width: 220px;"></select>
+            <select id="filter-personal-revista" class="form-control" style="max-width: 200px;">
+              <option value="">Todas las Revistas</option>
+              <option value="Planta Permanente">Planta Permanente</option>
+              <option value="Contratado Ley">Contratado Ley</option>
+              <option value="Locación de Servicios">Locación de Servicios</option>
+              <option value="Contrato de Obra">Contrato de Obra</option>
+              <option value="Gabinete">Gabinete</option>
+            </select>
+            <select id="filter-personal-estado" class="form-control" style="max-width: 150px;">
+              <option value="">Todos los Estados</option>
+              <option value="Activo">Activo</option>
+              <option value="Licencia">En Licencia</option>
+              <option value="Baja Transitoria">Baja</option>
+            </select>
+          </div>
+
+          <!-- Barra de Acciones para Agentes Seleccionados por Checkbox -->
+          <div id="personal-selection-toolbar" class="selection-toolbar" style="display: none; align-items: center; justify-content: space-between; background: #e0f2fe; border: 1px solid #7dd3fc; border-radius: 8px; padding: 10px 16px; margin-bottom: 14px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-weight: 600; color: #0369a1; font-size: 13.5px;" id="personal-selection-count">0 agentes seleccionados</span>
+              <button type="button" class="btn btn-outline btn-sm" onclick="deseleccionarTodoPersonal()" style="background: white; font-size: 12px; padding: 3px 8px;">Deseleccionar todos</button>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <button type="button" class="btn btn-sm btn-primary" onclick="descargarPDFNominaSeleccion()" title="Descargar PDF de nómina exclusivamente con los agentes marcados" style="display: inline-flex; align-items: center; gap: 5px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
+                <span>Nómina PDF (Seleccionados)</span>
+              </button>
+              <button type="button" class="btn btn-sm btn-accent" onclick="imprimirPersonalSeleccion()" title="Imprimir exclusivamente los agentes marcados" style="display: inline-flex; align-items: center; gap: 5px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 17h2a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-14a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h2" /><path d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4" /><path d="M7 13m0 2a2 2 0 0 1 2 -2h6a2 2 0 0 1 2 2v4a2 2 0 0 1 -2 2h-6a2 2 0 0 1 -2 -2z" /></svg>
+                <span>Imprimir Seleccionados</span>
+              </button>
+              <button type="button" class="btn btn-sm btn-outline" onclick="exportarExcelPersonalSeleccion()" title="Descargar Excel con los agentes marcados" style="background: white; display: inline-flex; align-items: center; gap: 5px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /><path d="M10 12l4 4m0 -4l-4 4" /></svg>
+                <span>Excel Seleccionados</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th style="width: 44px; text-align: center;">
+                    <input type="checkbox" id="check-all-personal" onchange="toggleSelectAllPersonal(this.checked)" title="Seleccionar/Deseleccionar todos los visibles" style="cursor: pointer; width: 16px; height: 16px;">
+                  </th>
+                  <th>Agente / Legajo</th>
+                  <th>DNI</th>
+                  <th>Situación Revista</th>
+                  <th>Cargo</th>
+                  <th>Área Asignada</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-personal"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================== -->
+      <!-- PESTAÑA 3: LICENCIAS                                  -->
+      <!-- ===================================================== -->
+      <section id="tab-licencias" class="tab-pane">
+        <!-- Sub-pestañas de licencias -->
+        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+          <button class="btn btn-primary btn-sm" id="subtab-btn-todas" onclick="switchSubtabLicencias('todas')" style="background: var(--primary); display: inline-flex; align-items: center; gap: 6px;">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /><path d="M9 9l1 0" /><path d="M9 13l6 0" /><path d="M9 17l6 0" /></svg>
+            <span>Todas las Licencias</span>
+          </button>
+          <button class="btn btn-outline btn-sm" id="subtab-btn-pendientes" onclick="switchSubtabLicencias('pendientes')" style="display: inline-flex; align-items: center; gap: 6px;">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 7v5l3 3" /></svg>
+            <span>Días Pendientes (Suspensiones)</span>
+          </button>
+          <button class="btn btn-outline btn-sm" id="subtab-btn-alertas" onclick="switchSubtabLicencias('alertas')" style="display: inline-flex; align-items: center; gap: 6px;">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
+            <span>Alertas Médicas</span>
+          </button>
+        </div>
+
+        <!-- Sub-panel: Todas las licencias -->
+        <div id="subtab-todas">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Control de Licencias – Dirección Provincial de Recursos Hídricos</div>
+            <button class="btn btn-primary" onclick="abrirModalNuevaLicencia()" style="display: inline-flex; align-items: center; gap: 6px;">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+              <span>Registrar Licencia</span>
+            </button>
+          </div>
+
+          <div class="search-bar-wrapper">
+            <input type="text" id="search-licencia" class="form-control" placeholder="Buscar por agente, DNI o diagnóstico..." oninput="loadLicencias()" style="min-width: 280px;">
+            <select id="filter-licencia-estado" class="form-control" onchange="loadLicencias()" style="max-width: 180px;">
+              <option value="">Todos los Estados</option>
+              <option value="Pendiente">Pendientes</option>
+              <option value="Justificada">Justificadas</option>
+              <option value="Observada">Observadas</option>
+              <option value="Rechazada">Rechazadas</option>
+            </select>
+            <select id="filter-licencia-tipo" class="form-control" onchange="loadLicencias()" style="max-width: 280px;">
+              <option value="">Todos los Tipos</option>
+              <option value="Anual Ordinaria – Convenio Colectivo">Anual Ordinaria – Convenio</option>
+              <option value="Anual Ordinaria – Planta Permanente">Anual Ordinaria – Planta</option>
+              <option value="Anual Ordinaria – Contrato de Locación de Obra">Anual Ordinaria – Contrato Obra</option>
+              <option value="Médica – Enfermedad del Agente (Corto Tratamiento)">Médica – Corto Tratamiento</option>
+              <option value="Médica – Largo Tratamiento (más de 40 días)">Médica – Largo Tratamiento</option>
+              <option value="Por Atención de Familiar Enfermo">Por Familiar Enfermo</option>
+              <option value="Por Atención de Hijo con Discapacidad">Por Hijo con Discapacidad</option>
+              <option value="Maternidad / Paternidad / Adopción (Ley 6.249)">Maternidad / Paternidad / Adopción</option>
+              <option value="Por Matrimonio">Por Matrimonio</option>
+              <option value="Por Duelo Familiar">Por Duelo Familiar</option>
+              <option value="Decenales">Decenales</option>
+              <option value="Por Capacitación / Curso">Por Capacitación / Curso</option>
+              <option value="Por Estudio / Examen">Por Estudio / Examen</option>
+              <option value="Por Actividades Culturales">Por Actividades Culturales</option>
+              <option value="Por Actividades Deportivas">Por Actividades Deportivas</option>
+              <option value="Por Asuntos Particulares">Por Asuntos Particulares</option>
+              <option value="Por Actividad Gremial">Por Actividad Gremial</option>
+              <option value="Por Estudios Ginecológicos y Mamografía">Estudios Ginecológicos</option>
+              <option value="Por Citación Judicial">Por Citación Judicial</option>
+              <option value="Por Citación Policial">Por Citación Policial</option>
+              <option value="Comisión de Servicios / Viaje Oficial">Comisión / Viaje Oficial</option>
+              <option value="Compensatorio">Compensatorio</option>
+            </select>
+          </div>
+
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Agente / DNI</th>
+                  <th>Tipo de Licencia</th>
+                  <th>Período y Días</th>
+                  <th>Certificado / Médico</th>
+                  <th>Estado Auditoría</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-licencias"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Catálogo de Normativa Interna -->
+        <div class="card" style="margin-top: 24px;">
+          <div class="card-header">
+            <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /><path d="M9 9l1 0" /><path d="M9 13l6 0" /><path d="M9 17l6 0" /></svg>
+              <span>Catálogo Normativo Completo – DPRH Jujuy</span>
+            </div>
+          </div>
+          <div id="normativa-container"></div>
+        </div>
+        </div>
+
+        <!-- Sub-panel: Días Pendientes (Suspensiones) -->
+        <div id="subtab-pendientes" style="display:none;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 7v5l3 3" /></svg>
+                <span>Días Pendientes por Suspensión de Licencia</span>
+              </div>
+              <button class="btn btn-outline btn-sm" onclick="loadDiasPendientes()" style="display: inline-flex; align-items: center; gap: 6px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></svg>
+                <span>Actualizar</span>
+              </button>
+            </div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+              Agentes que tienen días de licencia suspendidos pendientes de retomar. Registre cuando la licencia fue interrumpida por necesidades del servicio (ej: emergencia hídrica).
+            </p>
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Agente</th>
+                    <th>Tipo de Licencia</th>
+                    <th>Período</th>
+                    <th>Fecha Suspensión</th>
+                    <th>Días Tomados</th>
+                    <th>Días Pendientes</th>
+                    <th>Motivo</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-pendientes"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub-panel: Alertas Médicas -->
+        <div id="subtab-alertas" style="display:none;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
+                <span>Alertas – Agentes con Acumulación de Licencias Médicas</span>
+              </div>
+              <button class="btn btn-outline btn-sm" onclick="loadAlertasLicencias()" style="display: inline-flex; align-items: center; gap: 6px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></svg>
+                <span>Actualizar</span>
+              </button>
+            </div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+              Agentes que superaron el umbral anual de licencias médicas o tienen certificados pendientes de auditoría provincial.
+            </p>
+            <div id="alertas-container"><p style="color: var(--text-muted); text-align: center; padding: 24px;">Cargando alertas...</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================== -->
+      <!-- PESTAÑA 4: CARGAR DATOS (FORMULARIO MANUAL)           -->
+      <!-- ===================================================== -->
+      <section id="tab-cargar-datos" class="tab-pane">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Alta Individual de Personal (Carga Manual)</div>
+          </div>
+          <form id="form-nuevo-empleado">
+            <h4 style="color: var(--primary-light); font-size: 14px; margin-bottom: 12px; border-bottom: 1px solid var(--surface-border); padding-bottom: 4px;">1. Datos Personales</h4>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>DNI *</label>
+                <input type="text" name="dni" class="form-control" required placeholder="Ej: 32456789">
+              </div>
+              <div class="form-group">
+                <label>CUIL</label>
+                <input type="text" name="cuil" class="form-control" placeholder="Ej: 20-32456789-4">
+              </div>
+              <div class="form-group">
+                <label>Número de Legajo</label>
+                <input type="text" name="legajo" class="form-control" placeholder="Ej: LEG-1045">
+              </div>
+              <div class="form-group">
+                <label>Nombres *</label>
+                <input type="text" name="nombre" class="form-control" required placeholder="Ej: Juan Manuel">
+              </div>
+              <div class="form-group">
+                <label>Apellidos *</label>
+                <input type="text" name="apellido" class="form-control" required placeholder="Ej: Pérez">
+              </div>
+              <div class="form-group">
+                <label>Fecha de Nacimiento</label>
+                <input type="date" name="fecha_nacimiento" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Género</label>
+                <select name="genero" class="form-control">
+                  <option value="Masculino">Masculino</option>
+                  <option value="Femenino">Femenino</option>
+                  <option value="Otro">Otro / No declara</option>
+                </select>
+              </div>
+            </div>
+
+            <h4 style="color: var(--primary-light); font-size: 14px; margin: 18px 0 12px 0; border-bottom: 1px solid var(--surface-border); padding-bottom: 4px;">2. Contacto y Domicilio</h4>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Correo Electrónico</label>
+                <input type="email" name="email" class="form-control" placeholder="agente@hidricos.gob.ar">
+              </div>
+              <div class="form-group">
+                <label>Teléfono / Celular</label>
+                <input type="text" name="telefono" class="form-control" placeholder="Ej: 381-4551234">
+              </div>
+              <div class="form-group" style="grid-column: span 2;">
+                <label>Dirección / Domicilio Real</label>
+                <input type="text" name="direccion" class="form-control" placeholder="Calle, Número, Barrio, Localidad">
+              </div>
+            </div>
+
+            <h4 style="color: var(--primary-light); font-size: 14px; margin: 18px 0 12px 0; border-bottom: 1px solid var(--surface-border); padding-bottom: 4px;">3. Situación de Revista y Asignación</h4>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Situación de Revista *</label>
+                <select name="situacion_revista" id="nuevo-situacion-revista" class="form-control" required></select>
+              </div>
+              <div class="form-group">
+                <label>Área de Dependencia</label>
+                <select name="area_id" id="nuevo-area-id" class="form-control"></select>
+              </div>
+              <div class="form-group">
+                <label>Lugar de Trabajo</label>
+                <select name="lugar_trabajo" id="nuevo-lugar-trabajo" class="form-control"></select>
+              </div>
+              <div class="form-group">
+                <label>Función Operativa</label>
+                <select name="funcion" id="nuevo-funcion" class="form-control"></select>
+              </div>
+              <div class="form-group">
+                <label>Cargo Oficial</label>
+                <input type="text" name="cargo" id="nuevo-cargo" class="form-control" placeholder="Ej: Inspector de Obras / Técnico">
+              </div>
+              <div class="form-group">
+                <label>Fecha de Ingreso</label>
+                <input type="date" name="fecha_ingreso" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Estado Inicial</label>
+                <select name="estado" class="form-control">
+                  <option value="Activo">Activo</option>
+                  <option value="Licencia">En Licencia</option>
+                  <option value="Baja Transitoria">Baja Transitoria</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-top: 24px; display: flex; gap: 12px;">
+              <button type="submit" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" /><path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M14 4l0 4l-6 0l0 -4" /></svg>
+                <span>Guardar y Registrar en Base de Datos</span>
+              </button>
+              <button type="reset" class="btn btn-outline">Limpiar Formulario</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ===================================================== -->
+      <!-- PESTAÑA 5: IMPORTAR EXCEL                             -->
+      <!-- ===================================================== -->
+      <section id="tab-importar-excel" class="tab-pane">
+        <div class="card">
+          <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div class="card-title">Importador y Unificador de Planillas Excel (.xlsx)</div>
+            <button type="button" class="btn btn-outline btn-sm" onclick="descargarPlantillaExcelEjemplo()" style="display: inline-flex; align-items: center; gap: 6px; font-weight: 600; border-color: var(--primary-light); color: var(--primary-dark); background: #ffffff;">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
+              <span>📥 Descargar Plantilla de Ejemplo (.xlsx)</span>
+            </button>
+          </div>
+          <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 16px;">
+            Seleccione un libro Excel. El sistema analizará las hojas disponibles, le permitirá elegir la pestaña deseada y unificará los registros usando el <strong>DNI como clave primaria</strong> (actualiza existentes y agrega nuevos).
+          </p>
+          <div style="border: 2px dashed var(--primary-light); padding: 32px; text-align: center; border-radius: var(--radius); background: #f8fafc;">
+            <svg style="width: 48px; height: 48px; stroke: var(--primary-light); fill: none; stroke-width: 1.5; margin-bottom: 8px;" viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /><path d="M8 11h8v7h-8z" /><path d="M8 15h8" /><path d="M11 11v7" /></svg>
+            <p style="font-weight: 600; margin-bottom: 6px;">Seleccione su archivo .xlsx</p>
+            <input type="file" id="input-excel-file" accept=".xlsx, .xls" style="margin-top: 8px;">
+          </div>
+          <div id="excel-preview-area"></div>
+
+          <!-- Guía visual y clara con las columnas requeridas por el importador -->
+          <div class="excel-columns-guide" style="margin-top: 24px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+              <h4 style="font-size: 14px; font-weight: 700; color: var(--primary-dark); display: flex; align-items: center; gap: 8px; margin: 0;">
+                <svg class="icon-svg" viewBox="0 0 24 24" style="color: var(--primary);"><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /><path d="M9 9l1 0" /><path d="M9 13l6 0" /><path d="M9 17l6 0" /></svg>
+                <span>Guía de Estructura de Columnas para Importación de Personal</span>
+              </h4>
+              <span class="badge badge-info" style="font-size: 11.5px; padding: 4px 10px;">DNI: Clave Unificadora</span>
+            </div>
+            <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.4;">
+              El importador reconoce automáticamente los encabezados con independencia de mayúsculas, minúsculas o tildes. Si el DNI ya existe, actualiza los datos del agente; si no existe, lo da de alta automáticamente.
+            </p>
+            <div class="table-container">
+              <table class="custom-table guide-columns-table">
+                <thead>
+                  <tr>
+                    <th>Columna</th>
+                    <th>Estado</th>
+                    <th>Sinónimos Admitidos</th>
+                    <th>Descripción / Regla</th>
+                    <th>Ejemplo Válido</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>DNI</strong></td>
+                    <td><span class="badge badge-baja">Obligatorio</span></td>
+                    <td><code>documento, cedula, identificacion</code></td>
+                    <td>Clave primaria para actualizar o dar de alta sin duplicados.</td>
+                    <td><code>32456789</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Nombres</strong></td>
+                    <td><span class="badge badge-baja">Obligatorio</span></td>
+                    <td><code>nombre, nombres</code></td>
+                    <td>Nombres de pila del agente.</td>
+                    <td><code>Juan Manuel</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Apellidos</strong></td>
+                    <td><span class="badge badge-baja">Obligatorio</span></td>
+                    <td><code>apellido, apellidos</code></td>
+                    <td>Apellido(s) de la persona.</td>
+                    <td><code>Pérez</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Legajo</strong></td>
+                    <td><span class="badge badge-activo">Opcional</span></td>
+                    <td><code>matricula, nro_legajo</code></td>
+                    <td>Número de legajo administrativo único.</td>
+                    <td><code>LEG-1045</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Situación de Revista</strong></td>
+                    <td><span class="badge badge-activo">Opcional</span></td>
+                    <td><code>revista, situacion, condicion, planta</code></td>
+                    <td>Planta Permanente, Contrato Locación de Servicios, etc.</td>
+                    <td><code>Planta Permanente</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Área / Dependencia</strong></td>
+                    <td><span class="badge badge-activo">Opcional</span></td>
+                    <td><code>area, sector, departamento, direccion</code></td>
+                    <td>Nombre del área en el organigrama oficial de Recursos Hídricos.</td>
+                    <td><code>División de Obras</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Cargo</strong></td>
+                    <td><span class="badge badge-activo">Opcional</span></td>
+                    <td><code>cargo, puesto</code></td>
+                    <td>Cargo escalafonario asignado.</td>
+                    <td><code>Inspector Técnico</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Función</strong></td>
+                    <td><span class="badge badge-activo">Opcional</span></td>
+                    <td><code>funcion, tarea, rol</code></td>
+                    <td>Función o tarea operativa desempeñada.</td>
+                    <td><code>Mecánico</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Lugar de Trabajo</strong></td>
+                    <td><span class="badge badge-activo">Opcional</span></td>
+                    <td><code>lugar, lugar_trabajo, sede, destino</code></td>
+                    <td>Sede, dique o derivador habitual de prestación.</td>
+                    <td><code>Las Maderas</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Fecha de Ingreso</strong></td>
+                    <td><span class="badge badge-activo">Opcional</span></td>
+                    <td><code>ingreso, fecha_ingreso, alta</code></td>
+                    <td>Fecha en formato YYYY-MM-DD o DD/MM/YYYY.</td>
+                    <td><code>2018-05-15</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Contacto (Email/Tel)</strong></td>
+                    <td><span class="badge badge-activo">Opcional</span></td>
+                    <td><code>email, correo, mail, telefono, tel, celular</code></td>
+                    <td>Correo electrónico institucional o teléfono de contacto.</td>
+                    <td><code>jperez@hidricos.gob.ar</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================== -->
+      <!-- PESTAÑA 6: EXPORTAR EXCEL                             -->
+      <!-- ===================================================== -->
+      <section id="tab-exportar-excel" class="tab-pane">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Exportación de Datos Consolidados a Excel</div>
+          </div>
+          <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 20px;">
+            Genera un archivo <code>.xlsx</code> nativo con formato institucional de Recursos Hídricos organizado en 4 pestañas:
+          </p>
+          <div class="form-grid" style="grid-template-columns: repeat(2, 1fr); margin-bottom: 24px;">
+            <div class="card" style="margin: 0; background: #f8fafc;">
+              <h4 style="color: var(--primary); font-size: 14px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+                <span>1. Resumen Ejecutivo</span>
+              </h4>
+              <p style="font-size: 12.5px; color: var(--text-muted);">Tableros de indicadores, totales por revista y resumen de licencias médicas.</p>
+            </div>
+            <div class="card" style="margin: 0; background: #f8fafc;">
+              <h4 style="color: var(--primary); font-size: 14px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /><path d="M21 21v-2a4 4 0 0 0 -3 -3.85" /></svg>
+                <span>2. Personal</span>
+              </h4>
+              <p style="font-size: 12.5px; color: var(--text-muted);">Nómina completa con DNI, Legajo, Cargo, Función, Área y Estado.</p>
+            </div>
+            <div class="card" style="margin: 0; background: #f8fafc;">
+              <h4 style="color: var(--primary); font-size: 14px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /><path d="M9 9l1 0" /><path d="M9 13l6 0" /><path d="M9 17l6 0" /></svg>
+                <span>3. Licencias</span>
+              </h4>
+              <p style="font-size: 12.5px; color: var(--text-muted);">Certificados médicos, diagnósticos, días computados y estado de justificación.</p>
+            </div>
+            <div class="card" style="margin: 0; background: #f8fafc;">
+              <h4 style="color: var(--primary); font-size: 14px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M5 12v-7a2 2 0 0 1 2 -2h7l5 5v4" /><path d="M5 18h1.5a1.5 1.5 0 0 0 0 -3h-1.5v6" /><path d="M17 18h2" /><path d="M20 15h-3v6" /><path d="M11 15v6h3" /></svg>
+                <span>4. Contratos</span>
+              </h4>
+              <p style="font-size: 12.5px; color: var(--text-muted);">Vigencia de contratos, resoluciones y locaciones de servicio.</p>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="descargarExcelCompleto()" style="font-size: 15px; padding: 12px 24px; display: inline-flex; align-items: center; gap: 8px;">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
+            <span>Descargar Libro Consolidado (.xlsx)</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ===================================================== -->
+      <!-- PESTAÑA COMPENSATORIOS (MÓDULO 4)                      -->
+      <!-- ===================================================== -->
+      <section id="tab-compensatorios" class="tab-pane">
+        <div class="card" style="margin-bottom: 20px;">
+          <div class="card-header">
+            <div class="card-title">Módulo 4: Gestión y Carga de Días Compensatorios</div>
+          </div>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+            Permite cargar saldo de días a favor de los agentes e ingresar nuevas solicitudes de compensatorios con cómputo automático de días hábiles y descuento de saldo.
+          </p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <!-- Formulario 1: Carga de Días -->
+            <div style="background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0;">
+              <h4 style="color: var(--primary); margin-bottom: 12px; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+                <span>Cargar / Acreditar Días Compensatorios</span>
+              </h4>
+              <form id="form-cargar-compensatorio" onsubmit="guardarCargaCompensatorio(event)">
+                <div class="form-group" style="margin-bottom: 10px;">
+                  <label>Agente / Empleado (*)</label>
+                  <select id="comp-carga-agente-id" class="form-control" required onchange="actualizarInfoSaldoAgente(this.value, 'carga')"></select>
+                  <small id="comp-carga-saldo-info" style="color: var(--primary-dark); font-weight: bold;"></small>
+                </div>
+                <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 10px;">
+                  <div class="form-group">
+                    <label>Cantidad de Días (*)</label>
+                    <input type="number" step="0.5" id="comp-carga-dias" class="form-control" required placeholder="Ej: 2.0">
+                  </div>
+                  <div class="form-group">
+                    <label>Fecha de Carga (*)</label>
+                    <input type="date" id="comp-carga-fecha" class="form-control" required>
+                  </div>
+                </div>
+                <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 10px;">
+                  <div class="form-group">
+                    <label>N° Acta / Formulario</label>
+                    <input type="text" id="comp-carga-acta" class="form-control" placeholder="Ej: ACTA-2026-045">
+                  </div>
+                  <div class="form-group">
+                    <label>Motivo / Justificación</label>
+                    <input type="text" id="comp-carga-motivo" class="form-control" placeholder="Servicio extraordinario / Guardia">
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                  <svg class="icon-svg" viewBox="0 0 24 24"><path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" /><path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M14 4l0 4l-6 0l0 -4" /></svg>
+                  <span>Registrar Carga de Días</span>
+                </button>
+              </form>
+            </div>
+
+            <!-- Formulario 2: Solicitud de Compensatorio -->
+            <div style="background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0;">
+              <h4 style="color: var(--primary-dark); margin-bottom: 12px; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /><path d="M9 9l1 0" /><path d="M9 13l6 0" /><path d="M9 17l6 0" /></svg>
+                <span>Solicitar Compensatorio (Descuento Automático)</span>
+              </h4>
+              <form id="form-solicitar-compensatorio" onsubmit="guardarSolicitudCompensatorio(event)">
+                <div class="form-group" style="margin-bottom: 10px;">
+                  <label>Agente / Empleado (*)</label>
+                  <select id="comp-solicitar-agente-id" class="form-control" required onchange="actualizarInfoSaldoAgente(this.value, 'solicitud')"></select>
+                  <small id="comp-solicitar-saldo-info" style="color: #2563eb; font-weight: bold;"></small>
+                </div>
+                <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 10px;">
+                  <div class="form-group">
+                    <label>Fecha Inicio (*)</label>
+                    <input type="date" id="comp-solicitar-fecha-inicio" class="form-control" required onchange="calcularPreviaDiasHabiles()">
+                  </div>
+                  <div class="form-group">
+                    <label>Fecha Cierre (*)</label>
+                    <input type="date" id="comp-solicitar-fecha-fin" class="form-control" required onchange="calcularPreviaDiasHabiles()">
+                  </div>
+                </div>
+                <div style="margin-bottom: 10px; font-size: 12.5px; color: var(--text-muted);" id="comp-preview-dias-habiles">
+                  Cómputo estimado: <strong>- días hábiles</strong> (excluye fines de semana y feriados cargados)
+                </div>
+                <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 10px;">
+                  <div class="form-group">
+                    <label>N° Acta / Formulario</label>
+                    <input type="text" id="comp-solicitar-acta" class="form-control" placeholder="Ej: FORM-2026-88">
+                  </div>
+                  <div class="form-group">
+                    <label>Observaciones</label>
+                    <input type="text" id="comp-solicitar-obs" class="form-control" placeholder="Opcional">
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-success" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                  <svg class="icon-svg" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 9l5 -5l5 5" /><path d="M12 4l0 12" /></svg>
+                  <span>Presentar Solicitud y Descontar Saldo</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabla de Solicitudes Registradas -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Historial de Solicitudes de Compensatorios</div>
+            <button class="btn btn-outline btn-sm" onclick="loadCompensatorios()" style="display: inline-flex; align-items: center; gap: 6px;">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></svg>
+              <span>Actualizar</span>
+            </button>
+          </div>
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Agente</th>
+                  <th>N° Formulario</th>
+                  <th>Fecha Inicio</th>
+                  <th>Fecha Cierre</th>
+                  <th>Días Hábiles</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-compensatorios-solicitudes"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================== -->
+      <!-- PESTAÑA 7: ORGANIGRAMA DINÁMICO Y ADMINISTRABLE        -->
+      <!-- ===================================================== -->
+      <section id="tab-organigrama" class="tab-pane">
+        <div class="card" style="margin-bottom: 20px;">
+          <div class="card-header">
+            <div class="card-title">Módulo 5: Administración de la Estructura Jerárquica</div>
+            <button class="btn btn-primary btn-sm" onclick="abrirModalCrearArea()" style="display: inline-flex; align-items: center; gap: 6px;">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+              <span>Agregar Nueva Unidad (Dirección / Área / Depto / División)</span>
+            </button>
+          </div>
+          <p style="font-size: 12.5px; color: var(--text-muted);">
+            Gestione las unidades organizativas de la institución. Las modificaciones se reflejarán inmediatamente en el organigrama interactivo y en las fichas del personal.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Organigrama Dinámico Interactivo</div>
+            <button class="btn btn-outline btn-sm" onclick="loadOrganigrama()" style="display: inline-flex; align-items: center; gap: 6px;">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></svg>
+              <span>Actualizar Organigrama</span>
+            </button>
+          </div>
+          <div id="organigrama-container" class="org-tree"></div>
+        </div>
+      </section>
+
+      <!-- ===================================================== -->
+      <!-- PESTAÑA 8: PAPELERA                                   -->
+      <!-- ===================================================== -->
+      <section id="tab-papelera" class="tab-pane">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Papelera de Reciclaje </div>
+            <button class="btn btn-danger btn-sm" onclick="vaciarPapeleraCompleta()" style="display: inline-flex; align-items: center; gap: 6px;">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
+              <span>Vaciar Papelera Definitivamente</span>
+            </button>
+          </div>
+          <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px;">
+            Los registros eliminados pueden ser restaurados o borrados permanentemente de la base de datos.
+          </p>
+          <h4 style="font-size: 14px; margin: 12px 0 8px 0; color: var(--primary-dark);">Personal en Papelera</h4>
+          <div class="table-container" style="margin-bottom: 20px;">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Agente</th>
+                  <th>Área</th>
+                  <th>Fecha Eliminación</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-papelera-personal"></tbody>
+            </table>
+          </div>
+
+          <h4 style="font-size: 14px; margin: 12px 0 8px 0; color: var(--primary-dark);">Licencias en Papelera</h4>
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Agente</th>
+                  <th>Tipo Licencia</th>
+                  <th>Fecha Eliminación</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-papelera-licencias"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ===================================================== -->
+      <!-- PESTAÑA 10: CONFIGURACIÓN E INSTRUCTIVO              -->
+      <!-- ===================================================== -->
+      <section id="tab-config" class="tab-pane">
+        <!-- MÓDULO DE GESTIÓN DE USUARIOS Y PERMISOS -->
+        <div class="card" id="card-gestion-usuarios-box" style="margin-bottom: 24px;">
+          <div class="card-header">
+            <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" /><path d="M12 11m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M12 12l0 2.5" /></svg>
+              <span>Gestión de Usuarios y Permisos</span>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-outline btn-sm" id="btn-acceder-usuarios" onclick="toggleAccesoUsuarios()" style="display: inline-flex; align-items: center; gap: 6px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M15 12a3 3 0 1 1 -6 0 3 3 0 0 1 6 0z" /><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                <span>Acceder</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="panel-usuarios-content" style="display: none; margin-top: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+              <p style="font-size: 13px; color: var(--text-muted); margin: 0;">
+                Configure las cuentas de usuario y asigne permisos específicos para controlar qué módulos y operaciones puede realizar cada operador.
+              </p>
+              <button class="btn btn-primary btn-sm" onclick="abrirModalUsuario()" style="display: inline-flex; align-items: center; gap: 6px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M16 19h6" /><path d="M19 16v6" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /></svg>
+                <span>Nuevo Usuario</span>
+              </button>
+            </div>
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Usuario</th>
+                    <th>Nombre Completo</th>
+                    <th>Perfil / Rol</th>
+                    <th>Permisos Otorgados</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-usuarios-list"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- GESTOR DE CONTENIDO Y CATÁLOGOS DEL SISTEMA               -->
+        <!-- ========================================================= -->
+        <div class="card" id="card-gestor-catalogos" style="margin-bottom: 24px; border-top: 4px solid var(--primary);">
+          <div class="card-header">
+            <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M4 4h6v6h-6z" /><path d="M14 4h6v6h-6z" /><path d="M4 14h6v6h-6z" /><path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /></svg>
+              <span>Gestor de Contenido y Catálogos</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted); font-weight: 500;">
+              Catálogos Maestros del Sistema
+            </div>
+          </div>
+
+          <!-- Pestañas del Gestor de Catálogos -->
+          <div class="catalog-tabs-bar" style="display: flex; gap: 8px; border-bottom: 2px solid #e2e8f0; padding: 4px 16px 10px 16px; margin-bottom: 16px; flex-wrap: wrap;">
+            <button type="button" class="catalog-tab-btn active" id="btn-cat-tab-revistas" onclick="cambiarPestanaCatalogo('revistas')">
+              📋 Situaciones de Revista (<span id="cat-count-revistas">0</span>)
+            </button>
+            <button type="button" class="catalog-tab-btn" id="btn-cat-tab-areas" onclick="cambiarPestanaCatalogo('areas')">
+              🏛️ Áreas y Dependencias (<span id="cat-count-areas">0</span>)
+            </button>
+            <button type="button" class="catalog-tab-btn" id="btn-cat-tab-lugares-funciones" onclick="cambiarPestanaCatalogo('lugares-funciones')">
+              📍 Lugares de Trabajo y 💼 Funciones
+            </button>
+            <button type="button" class="catalog-tab-btn" id="btn-cat-tab-normativa" onclick="cambiarPestanaCatalogo('normativa')">
+              📜 Normativa de Licencias (<span id="cat-count-normativa">0</span>)
+            </button>
+          </div>
+
+          <!-- Pestaña 1: Situaciones de Revista -->
+          <div id="cat-tab-content-revistas" class="catalog-tab-pane" style="display: block; padding: 0 16px 16px 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+              <p style="font-size: 13px; color: var(--text-muted); margin: 0;">
+                Condiciones de revista y modalidades de contratación habilitadas para la nómina provincial.
+              </p>
+              <button type="button" class="btn btn-primary btn-sm" onclick="agregarCatalogoItem('situacion_revista')" style="display: inline-flex; align-items: center; gap: 6px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+                <span>Nueva Situación de Revista</span>
+              </button>
+            </div>
+            <div id="catalogo-revistas-container" class="catalog-grid-cards"></div>
+          </div>
+
+          <!-- Pestaña 2: Áreas y Dependencias -->
+          <div id="cat-tab-content-areas" class="catalog-tab-pane" style="display: none; padding: 0 16px 16px 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+              <p style="font-size: 13px; color: var(--text-muted); margin: 0;">
+                Estructura jerárquica organizativa: Direcciones, Departamentos, Divisiones y Sectores.
+              </p>
+              <button type="button" class="btn btn-primary btn-sm" onclick="abrirModalCrearArea()" style="display: inline-flex; align-items: center; gap: 6px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+                <span>Nueva Dependencia / Área</span>
+              </button>
+            </div>
+            <div class="table-container">
+              <table class="custom-table" id="tabla-catalogo-areas">
+                <thead>
+                  <tr>
+                    <th>Nivel / Jerarquía</th>
+                    <th>Nombre de la Dependencia</th>
+                    <th>Dependencia Superior (Padre)</th>
+                    <th>Responsable</th>
+                    <th>Personal Asignado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-catalogo-areas"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Pestaña 3: Lugares de Trabajo y Funciones -->
+          <div id="cat-tab-content-lugares-funciones" class="catalog-tab-pane" style="display: none; padding: 0 16px 16px 16px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+              <!-- Sub-panel Lugares de Trabajo -->
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                  <div>
+                    <h4 style="font-size: 13.5px; font-weight: 700; color: var(--primary-dark); margin: 0;">📍 Lugares de Trabajo (<span id="cat-count-lugares">0</span>)</h4>
+                    <span style="font-size: 11.5px; color: var(--text-muted);">Sedes, obras, derivadores y diques</span>
+                  </div>
+                  <button type="button" class="btn btn-primary btn-sm" onclick="agregarCatalogoItem('lugares_trabajo')" style="display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; padding: 4px 10px;">
+                    <span>+ Agregar Lugar</span>
+                  </button>
+                </div>
+                <div id="catalogo-lugares-container" class="catalog-sublist-container"></div>
+              </div>
+
+              <!-- Sub-panel Funciones Operativas -->
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                  <div>
+                    <h4 style="font-size: 13.5px; font-weight: 700; color: var(--primary-dark); margin: 0;">💼 Funciones Operativas (<span id="cat-count-funciones">0</span>)</h4>
+                    <span style="font-size: 11.5px; color: var(--text-muted);">Roles laborales y tareas técnicas</span>
+                  </div>
+                  <button type="button" class="btn btn-primary btn-sm" onclick="agregarCatalogoItem('funciones')" style="display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; padding: 4px 10px;">
+                    <span>+ Agregar Función</span>
+                  </button>
+                </div>
+                <div id="catalogo-funciones-container" class="catalog-sublist-container"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pestaña 4: Normativa de Licencias -->
+          <div id="cat-tab-content-normativa" class="catalog-tab-pane" style="display: none; padding: 0 16px 16px 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+              <p style="font-size: 13px; color: var(--text-muted); margin: 0;">
+                Catálogo de licencias según CCT, límites para Planta Permanente y Contratados, y requisitos legales.
+              </p>
+              <button type="button" class="btn btn-primary btn-sm" onclick="abrirModalNormativa()" style="display: inline-flex; align-items: center; gap: 6px;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+                <span>Nueva Norma de Licencia</span>
+              </button>
+            </div>
+            <div id="catalogo-normativa-container" style="display: flex; flex-direction: column; gap: 12px;"></div>
+          </div>
+        </div>
+
+
+
+
+
+        <!-- Card Copias de Seguridad en Google Drive (solo Administrador) -->
+        <div class="card" id="card-gdrive-backups" style="margin-bottom: 24px;">
+          <div class="card-header">
+            <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M6.657 18c-2.572 0 -4.657 -2.007 -4.657 -4.483c0 -2.475 2.085 -4.482 4.657 -4.482c.393 -1.762 1.794 -3.2 3.675 -3.773c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.913 0 3.464 1.56 3.464 3.486c0 1.927 -1.551 3.487 -3.465 3.487h-11.878" /></svg>
+              <span>Copias de Seguridad en Google Drive (cada 5 h, últimas 3)</span>
+            </div>
+            <div id="gdrive-status-badge" style="font-size: 11.5px; font-weight: bold; padding: 4px 10px; border-radius: 12px; background: #e2e8f0; color: #64748b;">○ Desconectado</div>
+          </div>
+          <div style="padding: 16px 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+            <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+              Se genera una copia de la base de datos cada 5 horas y se conservan solo las 3 más recientes. Para que suban a Google Drive, elija como carpeta de copias una carpeta dentro de su unidad de <strong>Google Drive para Escritorio</strong> (ej: <code>G:\Mi unidad\Backups RRHH</code>).
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+              <div>
+                <label style="font-size: 12px; font-weight: 600; color: var(--text-main);">Cuenta de Google:</label>
+                <input type="email" id="gdrive-input-email" class="form-control" placeholder="cuenta@gmail.com" style="font-size: 12.5px; margin-top: 4px;">
+              </div>
+              <div>
+                <label style="font-size: 12px; font-weight: 600; color: var(--text-main);">Carpeta de copias (sincronizada con Drive):</label>
+                <input type="text" id="gdrive-input-folder" class="form-control" placeholder="G:\Mi unidad\Backups RRHH" style="font-size: 12.5px; margin-top: 4px;">
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+              <button class="btn btn-outline btn-sm" id="btn-conectar-gdrive" onclick="conectarGDriveUI()">Conectar / Guardar</button>
+              <button class="btn btn-outline btn-sm" id="btn-desconectar-gdrive" onclick="desconectarGDriveUI()" style="display: none; color: var(--danger);">Desconectar</button>
+              <button class="btn btn-primary btn-sm" onclick="generarBackupGDriveAhoraUI()">Generar copia ahora</button>
+            </div>
+            <div id="gdrive-info" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;"></div>
+            <div id="gdrive-msg" style="display: none; font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 6px; margin-bottom: 8px;"></div>
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr><th>Archivo</th><th>Fecha</th><th>Tamaño</th><th>Acción</th></tr>
+                </thead>
+                <tbody id="tbody-gdrive-backups">
+                  <tr><td colspan="4" class="text-center" style="padding: 12px;">Sin copias.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" /></svg>
+              <span>Administración del Sistema, Auditoría y Respaldo</span>
+            </div>
+          </div>
+          <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+            <button class="btn btn-outline" onclick="descargarBackupDB()" style="display: inline-flex; align-items: center; gap: 6px;">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
+              <span>Descargar Copia de Seguridad (.db)</span>
+            </button>
+            <button class="btn btn-outline" onclick="reiniciarDatosDemo()" style="color: var(--danger); display: inline-flex; align-items: center; gap: 6px;">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></svg>
+              <span>Restaurar Datos Demo Originales</span>
+            </button>
+          </div>
+
+          <h4 style="font-size: 14px; margin-bottom: 10px; color: var(--primary-dark);">Registro de Auditoría (Logs)</h4>
+          <div class="table-container" style="max-height: 350px; overflow-y: auto;">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Fecha/Hora</th>
+                  <th>Usuario</th>
+                  <th>Operación</th>
+                  <th>Entidad / ID</th>
+                  <th>Detalles</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-auditoria"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Instructivo de Uso -->
+        <div class="card" style="margin-top: 20px;">
+          <div class="card-header">
+            <div class="card-title" style="display: flex; align-items: center; gap: 8px;">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /><path d="M9 9l1 0" /><path d="M9 13l6 0" /><path d="M9 17l6 0" /></svg>
+              <span>Instructivo de Uso y Arquitectura Técnica</span>
+            </div>
+          </div>
+          <div style="font-size: 13.5px; line-height: 1.6; color: var(--text-main);">
+            <p><strong>1. Motor Python & SQLite:</strong> Todos los datos se gestionan a través de una API REST protegida y una base de datos relacional local que garantiza integridad referencial y auditoría total.</p>
+            <p><strong>2. Aplicación de Escritorio Electron:</strong> Proporciona una interfaz gráfica nativa sin requerir conexión externa ni CDNs en internet.</p>
+            <p><strong>3. Gestión de Licencias:</strong> El módulo valida automáticamente el tipo de personal (Planta Permanente vs Contratados) y permite a los auditores justificar u observar certificados.</p>
+            <p><strong>4. Exportación Excel:</strong> Desde la sección "6. Exportar Excel" puede descargar el libro consolidado con todas las hojas: nómina, licencias, contratos y organigrama.</p>
+          </div>
+        </div>
+
+        <!-- Card Créditos e Información del Desarrollador (Al final de Configuración) -->
+        <div class="card" style="margin-top: 24px; border-left: 4px solid #6366f1; background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);">
+          <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div class="card-title" style="display: flex; align-items: center; gap: 12px;">
+              <button type="button" class="github-info-btn" onclick="window.abrirModalInfoDesarrollador()" title="Ver Créditos e Información del Desarrollador">
+                <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              </button>
+              <div>
+                <span style="font-weight: 700; font-size: 14px; color: var(--primary-dark);">Más Información y Créditos del Desarrollador</span>
+                <span style="display: block; font-size: 12px; color: var(--text-muted); margin-top: 1px;">Proyecto de Código Abierto • Dirección Provincial de Recursos Hídricos</span>
+              </div>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="window.abrirModalInfoDesarrollador()" style="display: inline-flex; align-items: center; gap: 6px; font-weight: 600; border-color: #a5b4fc; color: #4338ca;">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 9h.01" /><path d="M11 12h1v4h1" /></svg>
+              <span>ℹ️ Ver Más Información</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ========================================================= -->
+  <!-- MODALES                                                   -->
+  <!-- ========================================================= -->
+
+  <!-- Modal Ficha Individual Imprimible -->
+  <div class="modal-backdrop" id="modal-ficha">
+    <div class="modal-box" style="max-width: 850px;">
+      <div class="modal-header no-print">
+        <h3 class="modal-title">Ficha Individual de Personal</h3>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-accent btn-sm" id="btn-descargar-pdf-ficha" onclick="descargarPDFFichaActiva()" style="display: inline-flex; align-items: center; gap: 6px;">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
+            <span>Descargar PDF</span>
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="imprimirFicha()" style="display: inline-flex; align-items: center; gap: 6px;">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 17h2a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-14a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h2" /><path d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4" /><path d="M7 13m0 2a2 2 0 0 1 2 -2h6a2 2 0 0 1 2 2v4a2 2 0 0 1 -2 2h-6a2 2 0 0 1 -2 -2z" /></svg>
+            <span>Imprimir Ficha</span>
+          </button>
+          <button class="modal-close-btn" onclick="cerrarModal('modal-ficha')">&times;</button>
+        </div>
+      </div>
+      <div id="ficha-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Modal Cargar Licencia -->
+  <div class="modal-backdrop" id="modal-nueva-licencia">
+    <div class="modal-box" style="max-width: 780px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Registrar Licencia / Certificado – DPRH</h3>
+        <button class="modal-close-btn" onclick="cerrarModal('modal-nueva-licencia')">&times;</button>
+      </div>
+      <form id="form-nueva-licencia">
+        <!-- Agente/Empleado con buscador Select2 -->
+        <div class="form-group">
+          <label>Agente / Empleado *</label>
+          <select name="personal_id" id="lic-personal-id" class="form-control select2-control" required style="width: 100%;">
+            <option value="">Seleccione o busque un agente por apellido o DNI...</option>
+          </select>
+        </div>
+
+        <!-- Tipo de Licencia con datalist completo -->
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Tipo de Licencia *</label>
+            <select name="tipo_licencia" id="lic-tipo-licencia" class="form-control" required onchange="onTipoLicenciaChange()">
+              <option value="">-- Seleccione tipo --</option>
+              <optgroup label="Anual Ordinaria">
+                <option value="Anual Ordinaria – Convenio Colectivo">Anual Ordinaria – Convenio Colectivo</option>
+                <option value="Anual Ordinaria – Planta Permanente">Anual Ordinaria – Planta Permanente</option>
+                <option value="Anual Ordinaria – Contrato de Locación de Obra">Anual Ordinaria – Contrato de Locación de Obra</option>
+              </optgroup>
+              <optgroup label="Médicas y Salud">
+                <option value="Médica – Enfermedad del Agente (Corto Tratamiento)">Médica – Enfermedad del Agente (Corto Tratamiento)</option>
+                <option value="Médica – Largo Tratamiento (más de 40 días)">Médica – Largo Tratamiento (más de 40 días)</option>
+                <option value="Por Atención de Familiar Enfermo">Por Atención de Familiar Enfermo</option>
+                <option value="Por Atención de Hijo con Discapacidad">Por Atención de Hijo con Discapacidad</option>
+                <option value="Por Estudios Ginecológicos y Mamografía">Por Estudios Ginecológicos y Mamografía</option>
+              </optgroup>
+              <optgroup label="Familiar y Personal">
+                <option value="Maternidad / Paternidad / Adopción (Ley 6.249)">Maternidad / Paternidad / Adopción (Ley 6.249)</option>
+                <option value="Por Matrimonio">Por Matrimonio</option>
+                <option value="Por Duelo Familiar">Por Duelo Familiar</option>
+              </optgroup>
+              <optgroup label="Capacitación y Estudio">
+                <option value="Decenales">Decenales</option>
+                <option value="Por Capacitación / Curso">Por Capacitación / Curso</option>
+                <option value="Por Estudio / Examen">Por Estudio / Examen</option>
+                <option value="Por Actividades Culturales">Por Actividades Culturales</option>
+                <option value="Por Actividades Deportivas">Por Actividades Deportivas</option>
+              </optgroup>
+              <optgroup label="Especiales y Legales">
+                <option value="Por Asuntos Particulares">Por Asuntos Particulares</option>
+                <option value="Por Actividad Gremial">Por Actividad Gremial</option>
+                <option value="Por Citación Judicial">Por Citación Judicial</option>
+                <option value="Por Citación Policial">Por Citación Policial</option>
+                <option value="Comisión de Servicios / Viaje Oficial">Comisión de Servicios / Viaje Oficial</option>
+              </optgroup>
+              <optgroup label="Compensatorios">
+                <option value="Compensatorio">Compensatorio</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Período / Año Calendario</label>
+            <input type="number" name="periodo_anual" id="lic-periodo-anual" class="form-control" 
+              placeholder="Ej: 2025" min="2000" max="2099" value="">
+            <small style="color: var(--text-muted); font-size: 11px;">Período al que corresponde esta licencia (para gestión de días acumulados por año)</small>
+          </div>
+        </div>
+
+        <!-- Fechas con IDs y días automáticos -->
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Fecha de Inicio *</label>
+            <input type="date" name="fecha_inicio" id="lic-fecha-inicio" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Fecha de Fin *</label>
+            <input type="date" name="fecha_fin" id="lic-fecha-fin" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Días Totales *</label>
+            <input type="number" name="dias_totales" id="lic-dias-totales" class="form-control"
+              min="1" value="1" required
+              title="Calculado automáticamente por fechas, pero puede ajustarse manualmente">
+          </div>
+        </div>
+
+        <!-- Campos para Licencia Médica -->
+        <div class="form-group">
+          <label>Diagnóstico / Causa / Motivo</label>
+          <input type="text" name="diagnostico" class="form-control" placeholder="Ej: Gastroenteritis aguda / Vacaciones período 2025 / Matrimonio...">
+        </div>
+        <div class="form-grid" id="lic-campos-medicos">
+          <div class="form-group">
+            <label>N° Certificado</label>
+            <input type="text" name="certificado_numero" class="form-control" placeholder="CERT-1234">
+          </div>
+          <div class="form-group">
+            <label>Médico Emisor</label>
+            <input type="text" name="medico_nombre" class="form-control" placeholder="Dr. Juan López">
+          </div>
+          <div class="form-group">
+            <label>Matrícula Profesional</label>
+            <input type="text" name="medico_matricula" class="form-control" placeholder="MP-4521">
+          </div>
+        </div>
+
+        <!-- Campos para Licencias con Familiar (Duelo, Atención Familiar) -->
+        <div class="form-grid" id="lic-campos-familiar" style="display:none;">
+          <div class="form-group">
+            <label>Nombre del Familiar</label>
+            <input type="text" name="familiar_nombre" id="lic-familiar-nombre" class="form-control" placeholder="Nombre y apellido del familiar">
+          </div>
+          <div class="form-group">
+            <label>Parentesco</label>
+            <select name="familiar_parentesco" id="lic-familiar-parentesco" class="form-control">
+              <option value="">Seleccione parentesco...</option>
+              <option value="Hijo/a">Hijo/a</option>
+              <option value="Cónyuge">Cónyuge</option>
+              <option value="Concubino/a">Concubino/a</option>
+              <option value="Padre">Padre</option>
+              <option value="Madre">Madre</option>
+              <option value="Hermano/a">Hermano/a</option>
+              <option value="Abuelo/a">Abuelo/a</option>
+              <option value="Suegro/a">Suegro/a</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Campos para Viaje / Comisión -->
+        <div class="form-grid" id="lic-campos-viaje" style="display:none;">
+          <div class="form-group">
+            <label>Distancia en KM (fuera de provincia)</label>
+            <input type="number" name="km_distancia" id="lic-km-distancia" class="form-control" min="0" placeholder="Ej: 1200">
+            <small style="color: var(--text-muted); font-size: 11px;">Si supera 1000 km fuera de provincia, corresponden días adicionales según reglamento.</small>
+          </div>
+          <div class="form-group">
+            <label>Días Adicionales por Distancia</label>
+            <input type="number" name="dias_adicionales_viaje" id="lic-dias-adicionales" class="form-control" min="0" value="0" placeholder="0">
+            <small style="color: var(--text-muted); font-size: 11px;">Adjuntar constancia policial o pasaje en legajo digital.</small>
+          </div>
+        </div>
+
+        <!-- Auditoría y estado -->
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Estado de Justificación</label>
+            <select name="estado_justificacion" class="form-control">
+              <option value="Pendiente">Pendiente de Auditoría</option>
+              <option value="Justificada">Justificada</option>
+              <option value="Observada">Observada</option>
+            </select>
+          </div>
+          <div class="form-group" id="lic-auditoria-medica" style="display:none;">
+            <label>¿Auditada por Reconocimiento Médico Provincial?</label>
+            <select name="auditado_salud_provincial" class="form-control">
+              <option value="0">No / Pendiente</option>
+              <option value="1">Sí – Auditada y Validada</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Observaciones Adicionales</label>
+          <textarea name="observaciones" class="form-control" rows="2" placeholder="Notas adicionales, instrumento legal, etc."></textarea>
+        </div>
+        <div style="margin-top: 16px; display: flex; gap: 8px;">
+          <button type="submit" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" /><path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M14 4l0 4l-6 0l0 -4" /></svg>
+            <span>Registrar Licencia</span>
+          </button>
+          <button type="button" class="btn btn-outline" onclick="cerrarModal('modal-nueva-licencia')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Suspensión de Licencia -->
+  <div class="modal-backdrop" id="modal-suspension">
+    <div class="modal-box" style="max-width: 620px;">
+      <div class="modal-header">
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 7v5l3 3" /></svg>
+          <span>Registrar Suspensión de Licencia</span>
+        </h3>
+        <button class="modal-close-btn" onclick="cerrarModal('modal-suspension')">&times;</button>
+      </div>
+      <form id="form-suspension">
+        <input type="hidden" id="susp-licencia-id" name="licencia_id">
+        <input type="hidden" id="susp-personal-id" name="personal_id">
+        <div class="form-group">
+          <label>Agente</label>
+          <input type="text" id="susp-agente-nombre" class="form-control" readonly style="background:#f1f5f9;">
+        </div>
+        <div class="form-group">
+          <label>Tipo de Licencia Suspendida</label>
+          <input type="text" id="susp-tipo-licencia" class="form-control" readonly style="background:#f1f5f9;">
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Fecha de Suspensión *</label>
+            <input type="date" name="fecha_suspension" id="susp-fecha" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Días Tomados hasta la Suspensión *</label>
+            <input type="number" name="dias_tomados_hasta_suspension" id="susp-dias-tomados" class="form-control" min="0" required oninput="calcularDiasPendientes()">
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Días Pendientes (calculado) *</label>
+            <input type="number" name="dias_pendientes" id="susp-dias-pendientes" class="form-control" min="0" required style="background:#e0f2fe; font-weight:bold;">
+            <small style="color: var(--primary-light);">Días que el agente puede retomar durante el año</small>
+          </div>
+          <div class="form-group">
+            <label>Total de Días de la Licencia</label>
+            <input type="text" id="susp-dias-totales-ref" class="form-control" readonly style="background:#f1f5f9;">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Motivo de la Suspensión *</label>
+          <input type="text" name="motivo_suspension" class="form-control" required
+            placeholder="Ej: Emergencia hídrica / Necesidades del servicio">
+        </div>
+        <div class="form-group">
+          <label>Autorizado por</label>
+          <input type="text" name="autorizado_por" class="form-control"
+            placeholder="Nombre del superior que autoriza">
+        </div>
+        <div class="form-group">
+          <label>Fecha de Alta Estimada (cuando podrá retomar)</label>
+          <input type="date" name="fecha_alta" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Observaciones</label>
+          <textarea name="observaciones" class="form-control" rows="2"
+            placeholder="Notas adicionales sobre la suspensión..."></textarea>
+        </div>
+        <div style="margin-top: 16px; display: flex; gap: 8px;">
+          <button type="submit" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" /><path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M14 4l0 4l-6 0l0 -4" /></svg>
+            <span>Registrar Suspensión</span>
+          </button>
+          <button type="button" class="btn btn-outline" onclick="cerrarModal('modal-suspension')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Cargar / Editar Usuario y Permisos Granulares -->
+  <div class="modal-backdrop" id="modal-usuario">
+    <div class="modal-box" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-usuario-title" style="display: flex; align-items: center; gap: 8px;">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg>
+          <span id="modal-usuario-title-text">Crear Nuevo Usuario</span>
+        </h3>
+        <button class="modal-close-btn" onclick="cerrarModal('modal-usuario')">&times;</button>
+      </div>
+      <form id="form-usuario" onsubmit="guardarUsuario(event)" autocomplete="off">
+        <input type="hidden" id="usuario-id">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombre de Usuario (Login) *</label>
+            <input type="text" id="usr-username" class="form-control" required autocomplete="off" placeholder="Ej: jlopez">
+          </div>
+          <div class="form-group">
+            <label>Nombre Completo *</label>
+            <input type="text" id="usr-nombre-completo" class="form-control" required autocomplete="off" placeholder="Ej: Juan López">
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Contraseña *</label>
+            <div style="position: relative; display: flex; align-items: center;">
+              <input type="password" id="usr-password" class="form-control" autocomplete="new-password" placeholder="Dejar en blanco si no desea cambiarla" style="width: 100%; padding-right: 40px;">
+              <button type="button" class="pw-toggle-btn"
+                      onpointerdown="startPasswordReveal('usr-password', this)"
+                      onpointerup="endPasswordReveal('usr-password', this)"
+                      onpointerleave="endPasswordReveal('usr-password', this)"
+                      onpointercancel="endPasswordReveal('usr-password', this)"
+                      title="Mantener presionado para ver contraseña">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Perfil / Rol Principal *</label>
+            <select id="usr-rol" class="form-control" required onchange="togglePermisosSegunRol()">
+              <option value="personalizado">Personalizado (Permisos Segmentados)</option>
+              <option value="admin">Administrador General (Control Total)</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="box-permisos-granulares" style="margin-top: 14px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px;">
+          <h4 style="font-size: 13.5px; color: #0f2444; margin-bottom: 6px; font-weight: bold;">Asignación Granular de Permisos (Checkboxes)</h4>
+          <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 12px;">Marque las acciones habilitadas expresamente para este usuario:</p>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12.5px;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" class="chk-permiso" value="personal.crear">
+              <span>Dar de alta empleados</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" class="chk-permiso" value="personal.editar">
+              <span>Modificar datos de empleados</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" class="chk-permiso" value="personal.eliminar">
+              <span>Mover empleados a Papelera</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" class="chk-permiso" value="licencias.crear">
+              <span>Registrar licencias / certificados</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" class="chk-permiso" value="licencias.auditar">
+              <span>Auditar / Justificar licencias</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" class="chk-permiso" value="licencias.suspender">
+              <span>Registrar suspensiones de licencias</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" class="chk-permiso" value="expedientes.crear">
+              <span>Dar de alta expedientes / notas / memos</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" class="chk-permiso" value="resoluciones.buscar">
+              <span>Buscar / Registrar resoluciones</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" class="chk-permiso" value="excel.importar">
+              <span>Importar planillas Excel</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" class="chk-permiso" value="excel.exportar">
+              <span>Exportar libros a Excel</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" class="chk-permiso" value="papelera.gestionar">
+              <span>Vaciar / Restaurar Papelera</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" class="chk-permiso" value="documentos.subir">
+              <span>Adjuntar documentos a Legajo</span>
+            </label>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px; display: flex; gap: 8px;">
+          <button type="submit" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" /><path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M14 4l0 4l-6 0l0 -4" /></svg>
+            <span>Guardar Usuario</span>
+          </button>
+          <button type="button" class="btn btn-outline" onclick="cerrarModal('modal-usuario')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Crear/Editar Área u Organigrama -->
+  <div class="modal-backdrop" id="modal-area">
+    <div class="modal-box" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-area-title" style="display: flex; align-items: center; gap: 8px;">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 21l18 0" /><path d="M9 8l1 0" /><path d="M9 12l1 0" /><path d="M9 16l1 0" /><path d="M14 8l1 0" /><path d="M14 12l1 0" /><path d="M14 16l1 0" /><path d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16" /></svg>
+          <span id="modal-area-title-text">Unidad Organizativa</span>
+        </h3>
+        <button class="modal-close-btn" onclick="cerrarModal('modal-area')">&times;</button>
+      </div>
+      <form id="form-area-organigrama" onsubmit="guardarAreaOrganigrama(event)">
+        <input type="hidden" id="area-id">
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Nombre de la Unidad / Área / Departamento *</label>
+          <input type="text" id="area-nombre" class="form-control" required placeholder="Ej: Departamento de Redes y Electrónica">
+        </div>
+        <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 12px;">
+          <div class="form-group">
+            <label>Código Interno</label>
+            <input type="text" id="area-codigo" class="form-control" placeholder="Ej: DRE-01">
+          </div>
+          <div class="form-group">
+            <label>Nivel Jerárquico *</label>
+            <select id="area-nivel" class="form-control" required>
+              <option value="1">1 - Dirección General</option>
+              <option value="2">2 - Área / Dirección</option>
+              <option value="3" selected>3 - Departamento</option>
+              <option value="4">4 - División / Sector</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Unidad Superior (Padre)</label>
+          <select id="area-parent-id" class="form-control">
+            <option value="">-- Ninguna (Nivel Superior Principal) --</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Responsable / Jefe a Cargo</label>
+          <input type="text" id="area-responsable" class="form-control" placeholder="Ej: Ing. Juan Pérez">
+        </div>
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label>Descripción / Funciones</label>
+          <textarea id="area-descripcion" class="form-control" rows="2" placeholder="Descripción breve del área y sus responsabilidades..."></textarea>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button type="submit" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" /><path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M14 4l0 4l-6 0l0 -4" /></svg>
+            <span>Guardar Unidad Organizativa</span>
+          </button>
+          <button type="button" class="btn btn-outline" onclick="cerrarModal('modal-area')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Crear/Editar Norma de Licencia -->
+  <div class="modal-backdrop" id="modal-normativa">
+    <div class="modal-box" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /><path d="M9 9l1 0" /><path d="M9 13l6 0" /><path d="M9 17l6 0" /></svg>
+          <span id="modal-normativa-title-text">Norma de Licencia</span>
+        </h3>
+        <button class="modal-close-btn" onclick="cerrarModal('modal-normativa')">&times;</button>
+      </div>
+      <form id="form-modal-normativa" onsubmit="guardarNormativaModal(event)">
+        <input type="hidden" id="normativa-edit-index" value="-1">
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Tipo / Denominación de la Licencia *</label>
+          <input type="text" id="normativa-input-tipo" class="form-control" required placeholder="Ej: Médica – Corto Tratamiento">
+        </div>
+        <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 12px;">
+          <div class="form-group">
+            <label>Artículo / Encabezado Legal *</label>
+            <input type="text" id="normativa-input-articulo" class="form-control" required placeholder="Ej: Art. 23 - Licencias por Enfermedad">
+          </div>
+          <div class="form-group">
+            <label>Régimen / Categoría</label>
+            <input type="text" id="normativa-input-regimen" class="form-control" placeholder="Ej: Descanso Anual / Salud / Familiar">
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Límite y Condiciones para Planta Permanente</label>
+          <textarea id="normativa-input-limite-planta" class="form-control" rows="2" placeholder="Ej: Hasta 30 días por año calendario con goce de haberes..."></textarea>
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Límite y Condiciones para Contratados / Locación</label>
+          <textarea id="normativa-input-limite-contratados" class="form-control" rows="2" placeholder="Ej: Hasta 15 días continuos o discontinuos por período..."></textarea>
+        </div>
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label>Requisitos y Documentación Obligatoria</label>
+          <textarea id="normativa-input-requisito" class="form-control" rows="2" placeholder="Ej: Certificado médico con diagnóstico. Justificado por Reconocimiento Médico Provincial..."></textarea>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button type="submit" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" /><path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M14 4l0 4l-6 0l0 -4" /></svg>
+            <span>Guardar Norma</span>
+          </button>
+          <button type="button" class="btn btn-outline" onclick="cerrarModal('modal-normativa')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DE INFORMACIÓN DEL DESARROLLADOR Y CRÉDITOS -->
+  <div class="modal-backdrop" id="modal-info-desarrollador">
+    <div class="modal-box" style="max-width: 520px; padding: 0; overflow: hidden;">
+      <div style="background: linear-gradient(135deg, #0f2444 0%, #1a365d 100%); padding: 18px 24px; color: #ffffff; display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <svg viewBox="0 0 24 24" style="width: 26px; height: 26px; fill: currentColor;"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          <div>
+            <h3 style="font-size: 16px; font-weight: 700; margin: 0; line-height: 1.2;">Información del Software</h3>
+            <span style="font-size: 11.5px; opacity: 0.85;">Dirección Provincial de Recursos Hídricos — Jujuy</span>
+          </div>
+        </div>
+        <button type="button" onclick="cerrarModalInfoDesarrollador()" style="background: transparent; border: none; color: #ffffff; cursor: pointer; font-size: 20px; opacity: 0.8;" title="Cerrar ventana">✕</button>
+      </div>
+
+      <div style="padding: 20px 24px; max-height: 75vh; overflow-y: auto; font-size: 13px; line-height: 1.5; color: #1e293b;">
+        <!-- Seccion Open Source -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; margin-bottom: 16px;">
+          <div style="font-weight: 700; font-size: 13.5px; color: #0f2444; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+            <span>ℹ️ Más información</span>
+          </div>
+          <p style="font-size: 12.5px; color: #64748b; margin: 0;">
+            Este software es un proyecto de código abierto. Si encontrás algún error, querés proponer mejoras o colaborar, podés abrir un <em>issue</em> o enviar un <em>pull request</em>.
+          </p>
+        </div>
+
+        <!-- Creditos -->
+        <h4 style="font-size: 13.5px; font-weight: 700; color: #1a365d; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px;">
+          👨‍💻 Créditos y Agradecimientos
+        </h4>
+
+        <!-- Desarrollador Principal -->
+        <div style="margin-bottom: 14px;">
+          <strong style="color: #0f2444; font-size: 12.5px; display: block; margin-bottom: 6px;">Desarrollador Principal:</strong>
+          <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 10px 14px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <span style="font-weight: 700; font-size: 13.5px; color: #1e40af;">Ulises</span>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+              <a href="https://github.com/ulises47123" target="_blank" style="display: inline-flex; align-items: center; gap: 5px; color: #2563eb; text-decoration: none; font-weight: 600; font-size: 12px; background: #ffffff; padding: 4px 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+                <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: currentColor;"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                <span>@ulises47123</span>
+              </a>
+              <a href="mailto:cajulian213@gmail.com" style="display: inline-flex; align-items: center; gap: 5px; color: #dc2626; text-decoration: none; font-weight: 600; font-size: 12px; background: #ffffff; padding: 4px 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+                <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: currentColor;"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                <span>cajulian213@gmail.com</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- QA -->
+        <div style="margin-bottom: 12px;">
+          <strong style="color: #0f2444; font-size: 12.5px;">Pruebas y Control de Calidad (QA):</strong>
+          <p style="font-size: 12px; color: #475569; margin: 3px 0 0 0;">
+            • <strong>Candela Geronimo</strong> — Pruebas de funcionamiento, detección y reporte de errores.
+          </p>
+        </div>
+
+        <!-- Consultores -->
+        <div style="margin-bottom: 16px;">
+          <strong style="color: #0f2444; font-size: 12.5px;">Consultores de Datos:</strong>
+          <p style="font-size: 12px; color: #475569; margin: 3px 0 0 0;">
+            • Asesoramiento en estructura, validación y gestión de datos.
+          </p>
+        </div>
+
+        <!-- Cafecito -->
+        <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 14px; text-align: center;">
+          <div style="font-weight: 700; font-size: 13px; color: #92400e; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: #d97706;"><path d="M20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2zm0 5h-2V5h2v3zM2 21h18v-2H2v2z"/></svg>
+            <span>☕ Apoyo al proyecto</span>
+          </div>
+          <p style="font-size: 12px; color: #b45309; margin-bottom: 10px;">
+            Si el proyecto te resulta útil y querés colaborar con el desarrollo continuo, podés invitarme un café:
+          </p>
+          <a href="https://cafecito.app/ulisesjc" target="_blank" class="btn btn-sm" style="background: #ff8126; color: #ffffff; font-weight: bold; padding: 8px 18px; border-radius: 20px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(255, 129, 38, 0.35);">
+            <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: currentColor;"><path d="M20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2zm0 5h-2V5h2v3zM2 21h18v-2H2v2z"/></svg>
+            <span>Invitame un café en cafecito.app/ulisesjc</span>
+          </a>
+        </div>
+      </div>
+
+      <div style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 24px; text-align: right;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="cerrarModalInfoDesarrollador()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Librerías de Terceros (100% Offline) -->
+  <script src="vendor/jquery.min.js"></script>
+  <script src="vendor/select2.min.js"></script>
+
+  <!-- Scripts de la Aplicación -->
+  <script src="js/icons.js?v=2.8"></script>
+  <script src="js/charts.js?v=2.8"></script>
+  <script src="js/app.js?v=2.8"></script>
+</body>
+</html>
+

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Logotipo Temporal en Blanco / Placeholder DPRH -->
+  <rect width="100" height="100" rx="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="50%" y="54%" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#0284c7" text-anchor="middle" dominant-baseline="middle">DPRH</text>
+</svg>
