@@ -1,659 +1,209 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Manual del Proyecto de Recursos Hídricos — Instalación, Configuración y Uso</title>
-  <meta name="description" content="Guía paso a paso para la instalación, configuración local y vinculación con GitHub del Sistema de Recursos Hídricos.">
+  <title>Manual del Proyecto de Recursos Hídricos - Instalación, Configuración y Uso</title>
+  <meta name="description" content="Guía paso a paso ilustrada para la instalación, configuración local y vinculación oficial del Sistema DPRH.">
   
   <style>
-    /* =====================================================================
-       VARIABLES DE DISEÑO Y CONFIGURACIÓN BASE
-       Fondo blanco, excelente contraste, tipografía limpia y accesible
-       ===================================================================== */
     :root {
       --bg-body: #ffffff;
       --bg-surface: #f8fafc;
-      --bg-surface-elevated: #ffffff;
-      --bg-code: #0f172a;
-      
-      --text-main: #1e293b;
+      --bg-card: #ffffff;
+      --text-main: #0f172a;
       --text-muted: #475569;
-      --text-light: #64748b;
-      --text-code: #e2e8f0;
-
       --primary: #0284c7;
       --primary-dark: #0369a1;
       --primary-light: #e0f2fe;
       --primary-border: #bae6fd;
-
-      --accent: #0d9488;
-      --accent-light: #ccfbf1;
-      
       --border-color: #e2e8f0;
-      --border-subtle: #f1f5f9;
-
       --success-bg: #ecfdf5;
       --success-border: #a7f3d0;
       --success-text: #065f46;
-
       --warning-bg: #fffbeb;
       --warning-border: #fde68a;
       --warning-text: #92400e;
-
       --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
-
-      --radius-sm: 6px;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       --radius-md: 10px;
       --radius-lg: 16px;
       --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
-
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
       --container-max-w: 1100px;
-      --header-height: 70px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family);
       background-color: var(--bg-body);
       color: var(--text-main);
-      font-family: var(--font-family);
       line-height: 1.6;
     }
 
-    body {
-      background-color: var(--bg-body);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* Enfoque visible para accesibilidad */
-    :focus-visible {
-      outline: 2px solid var(--primary);
-      outline-offset: 3px;
-    }
-
-    /* =====================================================================
-       BARRA DE NAVEGACIÓN SUPERIOR (STICKY)
-       ===================================================================== */
+    /* HEADER */
     .site-header {
       position: sticky;
       top: 0;
-      z-index: 50;
-      background-color: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(8px);
+      background: #ffffff;
       border-bottom: 1px solid var(--border-color);
-      height: var(--header-height);
-      display: flex;
-      align-items: center;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
     }
-
     .header-container {
-      width: 100%;
       max-width: var(--container-max-w);
       margin: 0 auto;
-      padding: 0 1.5rem;
+      padding: 0.75rem 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 1rem;
     }
-
     .brand {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 12px;
       text-decoration: none;
-      color: var(--text-main);
+      color: inherit;
     }
-
-    .brand-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: var(--radius-sm);
-      background: linear-gradient(135deg, #0284c7, #0ea5e9);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ffffff;
-      font-weight: 700;
+    .brand img {
+      height: 44px;
+      width: auto;
+      object-fit: contain;
+    }
+    .brand-title {
       font-size: 1.15rem;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .brand-text h1 {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text-main);
+      font-weight: 800;
+      color: #0f172a;
       line-height: 1.2;
     }
-
-    .brand-text span {
+    .brand-subtitle {
       font-size: 0.8rem;
-      color: var(--text-muted);
-      display: block;
+      color: var(--primary);
+      font-weight: 600;
     }
-
     .nav-links {
       display: flex;
+      gap: 1rem;
       list-style: none;
-      gap: 0.5rem;
     }
-
-    .nav-link {
+    .nav-links a {
       text-decoration: none;
       color: var(--text-muted);
       font-size: 0.9rem;
-      font-weight: 500;
-      padding: 0.5rem 0.85rem;
-      border-radius: var(--radius-sm);
-      transition: all 0.2s ease;
+      font-weight: 600;
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--primary);
+      background: var(--primary-light);
     }
 
-    .nav-link:hover, .nav-link.active {
-      color: var(--primary-dark);
-      background-color: var(--primary-light);
-    }
-
-    /* Menú móvil */
-    .mobile-menu-btn {
-      display: none;
-      background: none;
-      border: 1px solid var(--border-color);
-      padding: 0.5rem 0.75rem;
-      border-radius: var(--radius-sm);
-      font-size: 1.2rem;
-      cursor: pointer;
-    }
-
-    /* =====================================================================
-       CONTENEDOR PRINCIPAL Y HERO
-       ===================================================================== */
+    /* MAIN CONTAINER */
     .main-container {
-      flex: 1;
-      width: 100%;
       max-width: var(--container-max-w);
-      margin: 0 auto;
-      padding: 2.5rem 1.5rem 4rem;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
     }
 
+    /* HERO BANNER CON OLAS SUAVES */
     .hero-banner {
       background: linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%);
       border: 1px solid var(--primary-border);
       border-radius: var(--radius-lg);
-      padding: 2.5rem 2rem;
-      margin-bottom: 3rem;
+      padding: 3rem 2rem 4rem 2rem;
+      margin-bottom: 2.5rem;
       box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
     }
-
+    .hero-banner-content {
+      position: relative;
+      z-index: 2;
+    }
     .hero-badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.5rem;
       background-color: #e0f2fe;
       color: #0369a1;
-      font-size: 0.8rem;
-      font-weight: 600;
-      padding: 0.3rem 0.75rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.35rem 1rem;
       border-radius: 9999px;
       margin-bottom: 1rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
-
     .hero-title {
-      font-size: 2.15rem;
+      font-size: 2.2rem;
       font-weight: 800;
       color: #0f172a;
-      line-height: 1.25;
-      margin-bottom: 0.75rem;
+      margin-bottom: 1rem;
+      line-height: 1.2;
     }
-
     .hero-subtitle {
       font-size: 1.1rem;
       color: var(--text-muted);
-      max-width: 820px;
-      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto 1.5rem auto;
     }
-
     .hero-meta {
-      margin-top: 1.5rem;
       display: flex;
       flex-wrap: wrap;
-      gap: 1.5rem;
-      padding-top: 1.25rem;
-      border-top: 1px solid #e0f2fe;
-      font-size: 0.88rem;
-      color: var(--text-muted);
-    }
-
-    .hero-meta-item {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    /* =====================================================================
-       SECCIONES Y TARJETAS
-       ===================================================================== */
-    .section-card {
-      background-color: var(--bg-surface-elevated);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 2.25rem 2rem;
-      margin-bottom: 2.5rem;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .section-header {
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      margin-bottom: 1.75rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .section-number {
-      background-color: var(--primary-light);
-      color: var(--primary-dark);
-      font-weight: 700;
-      font-size: 1.1rem;
-      min-width: 40px;
-      height: 40px;
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
       justify-content: center;
-      border: 1px solid var(--primary-border);
-    }
-
-    .section-title {
-      font-size: 1.55rem;
-      font-weight: 700;
-      color: #0f172a;
-      line-height: 1.3;
-    }
-
-    .section-desc {
-      font-size: 0.95rem;
-      color: var(--text-muted);
-      margin-top: 0.25rem;
-    }
-
-    /* =====================================================================
-       GRID DE ARQUITECTURA / CARACTERÍSTICAS
-       ===================================================================== */
-    .grid-features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.25rem;
-      margin: 1.5rem 0;
-    }
-
-    .feature-box {
-      background-color: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      padding: 1.25rem;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    .feature-box:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-      border-color: #cbd5e1;
-    }
-
-    .feature-box h4 {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-main);
-      margin-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .feature-box p {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    /* =====================================================================
-       PASOS DETALLADOS (STEPS)
-       ===================================================================== */
-    .step-list {
-      display: flex;
-      flex-direction: column;
       gap: 1.5rem;
-    }
-
-    .step-item {
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      padding: 1.5rem;
-      background-color: #ffffff;
-      transition: border-color 0.2s ease;
-    }
-
-    .step-item:hover {
-      border-color: #94a3b8;
-    }
-
-    .step-item-header {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .step-badge {
-      background-color: #0f172a;
-      color: #ffffff;
-      font-size: 0.78rem;
-      font-weight: 700;
-      padding: 0.25rem 0.6rem;
-      border-radius: 9999px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .step-heading {
-      font-size: 1.18rem;
-      font-weight: 600;
-      color: #0f172a;
-    }
-
-    .step-content {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      line-height: 1.6;
-    }
-
-    .step-content p {
-      margin-bottom: 0.75rem;
-    }
-
-    .step-content p:last-child {
-      margin-bottom: 0;
-    }
-
-    /* =====================================================================
-       CAJAS DE ALERTA Y RECOMENDACIÓN (CALLOUTS)
-       ===================================================================== */
-    .callout {
-      border-radius: var(--radius-md);
-      padding: 1rem 1.25rem;
-      margin: 1rem 0;
       font-size: 0.92rem;
-      line-height: 1.55;
-      display: flex;
-      gap: 0.75rem;
-      align-items: flex-start;
+      color: #334155;
     }
 
-    .callout-info {
-      background-color: var(--primary-light);
-      border: 1px solid var(--primary-border);
-      color: #0369a1;
+    /* Animación olas suaves hídricas */
+    @keyframes waveMotionSlow {
+      0% { transform: translateX(-10%); }
+      50% { transform: translateX(10%); }
+      100% { transform: translateX(-10%); }
     }
-
-    .callout-warning {
-      background-color: var(--warning-bg);
-      border: 1px solid var(--warning-border);
-      color: var(--warning-text);
-    }
-
-    .callout-success {
-      background-color: var(--success-bg);
-      border: 1px solid var(--success-border);
-      color: var(--success-text);
-    }
-
-    .callout-icon {
-      font-size: 1.2rem;
-      line-height: 1;
-      margin-top: 0.1rem;
-    }
-
-    /* =====================================================================
-       BLOQUES DE CÓDIGO Y COMANDOS (CON BOTÓN DE COPIAR)
-       ===================================================================== */
-    .code-wrapper {
-      position: relative;
-      margin: 0.85rem 0;
-      background-color: var(--bg-code);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      border: 1px solid #1e293b;
-    }
-
-    .code-header {
-      background-color: #1e293b;
-      padding: 0.4rem 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #334155;
-    }
-
-    .code-label {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: #94a3b8;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .copy-btn {
-      background-color: #334155;
-      color: #f1f5f9;
-      border: none;
-      padding: 0.25rem 0.65rem;
-      border-radius: var(--radius-sm);
-      font-size: 0.75rem;
-      font-family: var(--font-family);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      transition: background-color 0.2s ease;
-    }
-
-    .copy-btn:hover {
-      background-color: #475569;
-    }
-
-    .copy-btn.copied {
-      background-color: #059669;
-      color: #ffffff;
-    }
-
-    pre code {
-      display: block;
-      padding: 1rem 1.25rem;
-      color: var(--text-code);
-      font-family: var(--font-mono);
-      font-size: 0.88rem;
-      line-height: 1.5;
-      overflow-x: auto;
-    }
-
-    code.inline-code {
-      background-color: #f1f5f9;
-      color: #0f172a;
-      font-family: var(--font-mono);
-      padding: 0.15rem 0.4rem;
-      border-radius: 4px;
-      font-size: 0.88em;
-      border: 1px solid #e2e8f0;
-    }
-
-    /* Botón enlace general */
-    .btn-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      background-color: var(--primary);
-      color: #ffffff;
-      text-decoration: none;
-      padding: 0.55rem 1.1rem;
-      border-radius: var(--radius-sm);
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: background-color 0.2s ease, transform 0.1s ease;
-      margin-top: 0.5rem;
-    }
-
-    .btn-link:hover {
-      background-color: var(--primary-dark);
-      transform: translateY(-1px);
-    }
-
-    /* Lista ordenada estilizada */
-    .numbered-list {
-      margin-left: 1.25rem;
-      margin-top: 0.5rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .numbered-list li {
-      margin-bottom: 0.5rem;
-    }
-
-    /* =====================================================================
-       TABLA RESUMEN DE FLUJO
-       ===================================================================== */
-    .table-container {
-      overflow-x: auto;
-      margin: 1.25rem 0;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-    }
-
-    .custom-table {
+    .wave-container {
       width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      font-size: 0.9rem;
+      height: 90px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .wave-back {
+      position: absolute;
+      bottom: -15px;
+      left: -50%;
+      width: 200%;
+      height: 75px;
+      background: rgba(2, 132, 199, 0.12);
+      border-radius: 50% 50% 0 0;
+      animation: waveMotionSlow 6s ease-in-out infinite;
+    }
+    .wave-front {
+      position: absolute;
+      bottom: -5px;
+      left: -50%;
+      width: 200%;
+      height: 55px;
+      background: rgba(0, 229, 255, 0.18);
+      border-radius: 50% 50% 0 0;
+      animation: waveMotionSlow 8.5s ease-in-out infinite 1s;
     }
 
-    .custom-table th {
-      background-color: var(--bg-surface);
-      color: #0f172a;
-      font-weight: 600;
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .custom-table td {
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--border-color);
-      color: var(--text-muted);
-    }
-
-    .custom-table tr:last-child td {
-      border-bottom: none;
-    }
-
-    .custom-table tr:nth-child(even) {
-      background-color: #fafbfc;
-    }
-
-    /* =====================================================================
-       FOOTER
-       ===================================================================== */
-    .site-footer {
-      border-top: 1px solid var(--border-color);
-      background-color: #ffffff;
-      padding: 2.5rem 1.5rem;
-      margin-top: auto;
-    }
-
-    .footer-container {
-      max-width: var(--container-max-w);
-      margin: 0 auto;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1.5rem;
-      font-size: 0.88rem;
-      color: var(--text-light);
-    }
-
-    .footer-left p {
-      margin-bottom: 0.25rem;
-    }
-
-    .back-to-top {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .back-to-top:hover {
-      text-decoration: underline;
-    }
-
-    /* =====================================================================
-       RESPONSIVE DESIGN
-       ===================================================================== */
-    @media (max-width: 768px) {
-      .hero-title {
-        font-size: 1.7rem;
-      }
-      .hero-banner {
-        padding: 1.75rem 1.25rem;
-      }
-      .section-card {
-        padding: 1.5rem 1.25rem;
-      }
-      .nav-links {
-        display: none;
-        position: absolute;
-        top: var(--header-height);
-        left: 0;
-        right: 0;
-        background-color: #ffffff;
-        flex-direction: column;
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid var(--border-color);
-        box-shadow: var(--shadow-md);
-      }
-      .nav-links.open {
-        display: flex;
-      }
-      .mobile-menu-btn {
-        display: block;
-      }
-    }
-      /* =====================================================================
-       ESTILOS PERSONALIZADOS: BOTÓN UIERSE, LOADERS Y ANIMACIÓN DE AGUA
-       ===================================================================== */
-    /* Botón estilo Uiverse.io by ernestnash */
+    /* BOTONES ESTILO UIVERSE */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
-      padding: 0.9rem 1.8rem;
-      font-size: 16px;
+      padding: 0.85rem 1.7rem;
+      font-size: 15px;
       font-weight: 700;
       color: white;
       border: 3px solid rgb(252, 70, 100);
@@ -667,7 +217,6 @@
       border-radius: 8px;
       transition: color 0.3s ease;
     }
-
     .btn::before {
       content: "";
       position: absolute;
@@ -680,37 +229,31 @@
       transition: all .3s;
       z-index: -1;
     }
-
     .btn:hover::before {
       transform: translateX(0);
     }
 
-    /* Loader decorativo tipo cuadrícula */
+    /* LOADERS */
     .loader-grid {
-      width: 45px;
+      width: 32px;
       aspect-ratio: 1;
-      --g: conic-gradient(from -90deg at 10px 10px,#0284c7 90deg,#0000 0);
-      background: 
-        var(--g),
-        var(--g) 10px 10px,
-        var(--g) 20px 20px;
+      --g: conic-gradient(from -90deg at 8px 8px,#0284c7 90deg,#0000 0);
+      background: var(--g), var(--g) 8px 8px, var(--g) 16px 16px;
       background-size: 50% 50%;
       animation: l15 1.5s infinite;
     }
     @keyframes l15 {
-      90%,100% {background-position: -30px 30px,-20px 40px,-10px 50px} 
+      90%,100% {background-position: -24px 24px,-16px 32px,-8px 40px} 
     }
-
-    /* Loader decorativo tipo barra lineal */
     .loader-bar {
-      width: 90px;
-      height: 14px;
+      width: 80px;
+      height: 12px;
       color: #0284c7;
       background: 
-        linear-gradient(90deg,#0000 16px, currentColor 0 30px, #0000 0),
+        linear-gradient(90deg,#0000 14px, currentColor 0 26px, #0000 0),
         radial-gradient(circle closest-side at 68% 50%, currentColor 92%,#0000),
-        conic-gradient(from 45deg at calc(100% - 7px) 50%,currentColor 90deg,#0000 0),
-        conic-gradient(from -135deg at 7px 50%,currentColor 90deg,#0000 0);
+        conic-gradient(from 45deg at calc(100% - 6px) 50%,currentColor 90deg,#0000 0),
+        conic-gradient(from -135deg at 6px 50%,currentColor 90deg,#0000 0);
       background-position: 0 0;
       background-size: calc(3*100%/4) 100%;
       background-repeat: repeat-x;
@@ -720,589 +263,519 @@
       100% {background-position: -300% 0}
     }
 
-    /* Olas de agua lentas */
-    @keyframes waveMotionSlow {
-      0% { transform: translateX(-10%); }
-      50% { transform: translateX(10%); }
-      100% { transform: translateX(-10%); }
+    /* SECCIONES Y TARJETAS */
+    .section-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .section-number {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      font-size: 1.3rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .section-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .section-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+    }
+
+    /* CONTENEDORES DE IMÁGENES ILUSTRATIVAS */
+    .figure-container {
+      margin: 1.75rem 0;
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .figure-container img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      border: 1px solid #cbd5e1;
+    }
+    .figure-caption {
+      margin-top: 10px;
+      font-size: 0.88rem;
+      color: #475569;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+    .figure-caption strong {
+      color: #0f172a;
+    }
+
+    /* AVISOS Y CALLOUTS */
+    .callout {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      margin: 1.25rem 0;
+      font-size: 0.95rem;
+    }
+    .callout-warning {
+      background-color: var(--warning-bg);
+      border-left: 4px solid #f59e0b;
+      color: var(--warning-text);
+    }
+    .callout-success {
+      background-color: var(--success-bg);
+      border-left: 4px solid #10b981;
+      color: var(--success-text);
+    }
+    .callout-info {
+      background-color: #f0f9ff;
+      border-left: 4px solid var(--primary);
+      color: #0369a1;
+    }
+    .callout-icon {
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+
+    /* LISTAS */
+    .numbered-list {
+      margin-left: 1.5rem;
+      margin-top: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .numbered-list li {
+      margin-bottom: 0.75rem;
+      color: #334155;
+      font-size: 0.98rem;
+    }
+
+    /* TABLAS */
+    .table-container {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.92rem;
+    }
+    .custom-table th, .custom-table td {
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--border-color);
+    }
+    .custom-table th {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .custom-table tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+
+    /* FOOTER */
+    .site-footer {
+      border-top: 1px solid var(--border-color);
+      background-color: #f8fafc;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    code, kbd {
+      background-color: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      color: #0f172a;
     }
   </style>
 </head>
 <body>
 
-  <!-- =====================================================================
-       HEADER / NAVEGACIÓN
-       ===================================================================== -->
+  <!-- HEADER -->
   <header class="site-header" role="banner">
     <div class="header-container">
-      <a href="#inicio" class="brand" aria-label="Ir al inicio del manual">
-        <img src="logo.png" alt="Logo DPRH" style="height: 40px; width: auto; object-fit: contain; margin-right: 8px; border-radius: 6px;">
-        <div class="brand-text">
-          <h1>Recursos Hídricos</h1>
-          <span>Manual Técnico de Instalación</span>
+      <a href="#inicio" class="brand">
+        <img src="logo.png" alt="Logo DPRH">
+        <div>
+          <div class="brand-title">Recursos Hídricos</div>
+          <div class="brand-subtitle">Manual Oficial de Puesta en Marcha</div>
         </div>
       </a>
-
-      <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menú de navegación" aria-expanded="false">
-        ☰
-      </button>
-
-      <nav role="navigation" aria-label="Navegación del manual">
-        <ul class="nav-links" id="navLinks">
-          <li><a href="#introduccion" class="nav-link">Introducción</a></li>
-          <li><a href="#requisitos" class="nav-link">Requisitos Previos</a></li>
-          <li><a href="#ejecucion" class="nav-link">Ejecución Inicial</a></li>
-          <li><a href="#repositorio" class="nav-link">Configuración GitHub</a></li>
-        </ul>
-      </nav>
+      <ul class="nav-links">
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#paso1">1. Python</a></li>
+        <li><a href="#paso2">2. Proyecto</a></li>
+        <li><a href="#paso3">3. Arranque</a></li>
+        <li><a href="#paso4">4. Panel DPRH</a></li>
+        <li><a href="#paso5">5. GitHub & Llaves</a></li>
+      </ul>
     </div>
   </header>
 
-  <!-- =====================================================================
-       CONTENIDO PRINCIPAL
-       ===================================================================== -->
+  <!-- CONTENIDO -->
   <main class="main-container" id="inicio">
 
-    <!-- HERO BANNER -->
-    <section class="hero-banner" aria-labelledby="hero-title" style="position: relative; overflow: hidden;">
-      <!-- Animación suave de ondas hídricas decorativas -->
-      <div style="width:100%; height:90px; position:absolute; bottom:0; left:0; overflow:hidden; pointer-events:none; z-index:0;">
-        <div style="position:absolute; bottom:-15px; left:-50%; width:200%; height:75px; background:rgba(2, 132, 199, 0.12); border-radius:50% 50% 0 0; animation:waveMotionSlow 6s ease-in-out infinite;"></div>
-        <div style="position:absolute; bottom:-5px; left:-50%; width:200%; height:55px; background:rgba(0, 229, 255, 0.18); border-radius:50% 50% 0 0; animation:waveMotionSlow 8.5s ease-in-out infinite 1s;"></div>
-      </div>
-      <div style="position: relative; z-index: 1;">
-      <div style="margin-bottom: 1.25rem;"><img src="logo.png" alt="Logo DPRH" style="height: 80px; width: auto; object-fit: contain;"></div>
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;"><span class="hero-badge" style="margin-bottom: 0;">Documentación Oficial</span><div class="loader-grid" title="Cargando recursos"></div></div>
-      <h2 class="hero-title" id="hero-title">Manual del Proyecto de Recursos Hídricos</h2>
-      <p class="hero-subtitle">
-        Guía paso a paso para la instalación, automatización de dependencias, ejecución en entorno local y configuración remota con GitHub. Diseñado para ser accesible, ordenado y directo.
-      </p>
-      
-      <div class="hero-meta">
-        
-        <div class="hero-meta-item"><strong>Versión oficial de Python:</strong> Python 3.11.9 (64-bit / 32-bit)</div>
-        <div class="hero-meta-item">
-          <strong>Puerto por defecto:</strong> 8000 (HTTP/HTTPS)
+    <!-- HERO BANNER CON OLAS -->
+    <section class="hero-banner">
+      <div class="hero-banner-content">
+        <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 1rem;">
+          <img src="logo.png" alt="Logo DPRH" style="height: 65px; width: auto; object-fit: contain;">
+          <div class="loader-grid" title="Sistema Activo"></div>
+        </div>
+        <span class="hero-badge">Documentación Oficial DPRH</span>
+        <h1 class="hero-title">Manual de Instalación y Operación del Sistema</h1>
+        <p class="hero-subtitle">
+          Guía paso a paso ilustrada con capturas de pantalla para configurar el entorno, iniciar el servidor central y gestionar la sincronización automática con GitHub.
+        </p>
+        <div class="hero-meta">
+          <div><strong>Versión oficial de Python:</strong> Python 3.11.9 (64-bit / 32-bit)</div>
+          <div><strong>Puerto de red:</strong> 8000 (HTTPS Local y LAN)</div>
+          <div><strong>Acceso:</strong> Panel Ligero Tkinter + Navegador Web</div>
         </div>
       </div>
-    </div>
+      <!-- Olas decorativas -->
+      <div class="wave-container">
+        <div class="wave-back"></div>
+        <div class="wave-front"></div>
+      </div>
     </section>
 
-    <!-- SECCIÓN 1: INTRODUCCIÓN AL PROYECTO -->
-    <article class="section-card" id="introduccion" aria-labelledby="sec1-title">
+    <!-- BLOQUE 1: REQUISITOS PREVIOS Y PYTHON -->
+    <article class="section-card" id="paso1">
       <div class="section-header">
         <div class="section-number">1</div>
         <div>
-          <h2 class="section-title" id="sec1-title">Introducción al Proyecto</h2>
-          <p class="section-desc">Alcance, arquitectura general y funcionamiento del sistema.</p>
+          <h2 class="section-title">Requisitos Previos: Instalación y Verificación de Python</h2>
+          <p class="section-desc">El único requisito previo obligatorio que debe instalar en su equipo Windows.</p>
         </div>
       </div>
 
-      <p style="margin-bottom: 1rem;">
-        Bienvenido al <strong>Manual del Proyecto de Recursos Hídricos</strong>. Esta plataforma es una solución integral orientada a la gestión administrativa y operativa del personal y legajos de la Dirección Provincial de Recursos Hídricos (DPRH Jujuy).
-      </p>
-      <p style="margin-bottom: 1.5rem;">
-        Tras analizar la estructura de la aplicación, el sistema opera bajo una arquitectura modular y desacoplada compuesta por los siguientes componentes clave:
+      <p>
+        El sistema funciona sobre el lenguaje de programación <strong>Python versión 3.11.9</strong>. Antes de iniciar por primera vez, descargue e instale el paquete correspondiente a su arquitectura:
       </p>
 
-      <div class="grid-features">
-        <div class="feature-box">
-          <h4>💻 Interfaz y Frontend</h4>
-          <p>
-            Construido con soporte para aplicación de escritorio mediante Electron y paneles web modernos para la carga ágil y consulta de legajos y documentación.
-          </p>
-        </div>
-
-        <div class="feature-box">
-          <h4>⚡ Backend Robusto (FastAPI)</h4>
-          <p>
-            Desarrollado en Python con el framework <strong>FastAPI</strong>, gestionando endpoints de alta velocidad, validaciones de esquemas y reglas de negocio en el puerto <code>8000</code>.
-          </p>
-        </div>
-
-        <div class="feature-box">
-          <h4>🗄️ Persistencia de Datos</h4>
-          <p>
-            Almacenamiento estructurado mediante base de datos SQL (SQLite/PostgreSQL), encargada de la información de empleados, turnos y legajos digitales subidos.
-          </p>
-        </div>
-
-        <div class="feature-box">
-          <h4>🌐 Conectividad y Sincronización</h4>
-          <p>
-            Mecanismos de acceso seguro (túneles Cloudflare y certificados locales) y sincronización con GitHub para versionado de cambios y documentación.
-          </p>
-        </div>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin: 1.5rem 0;">
+        <a class="btn" href="https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe" target="_blank" rel="noopener noreferrer">
+          📥 Descargar Python 3.11.9 (64-bit - Recomendado)
+        </a>
+        <a class="btn" href="https://www.python.org/ftp/python/3.11.9/python-3.11.9.exe" target="_blank" rel="noopener noreferrer">
+          📥 Descargar Python 3.11.9 (32-bit)
+        </a>
+        <div class="loader-bar" title="Listo para descargar"></div>
       </div>
 
-      <div class="callout callout-info">
-        <span class="callout-icon">ℹ️</span>
+      <div class="callout callout-warning">
+        <span class="callout-icon">⚠️</span>
         <div>
-          <strong>Objetivo del manual:</strong> Asegurar que cualquier usuario, sin requerir experiencia previa avanzada en desarrollo, pueda desplegar y operar el sistema en su equipo de trabajo de forma exitosa.
+          <strong>Punto crítico durante la instalación:</strong> En la primera ventana del instalador oficial de Python, 
+          <strong>marque obligatoriamente la casilla inferior: "Add python.exe to PATH"</strong> antes de presionar el botón <strong>"Install Now"</strong>.
         </div>
       </div>
+
+      <!-- Imagen: borrame1.PNG -->
+      <div class="figure-container">
+        <img src="borrame1.PNG" alt="Referencia de instalación de Python con Add to PATH">
+        <p class="figure-caption">
+          <strong>Referencia de instalación:</strong> Active la casilla <em>"Add python.exe to PATH"</em> en la parte inferior para que el sistema reconozca Python automáticamente.
+        </p>
+      </div>
+
+      <h3 style="font-size: 1.15rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #0f172a;">
+        Comprobación opcional de la instalación
+      </h3>
+      <p>
+        Si desea comprobar que quedó correctamente instalado, presione las teclas <kbd>Windows</kbd> + <kbd>R</kbd>, escriba <code>cmd</code>, presione Enter y ejecute: <code>python --version</code>. Debe devolver <strong>Python 3.11.9</strong>.
+      </p>
     </article>
 
-    <!-- SECCIÓN 2: REQUISITOS PREVIOS E INSTALACIÓN -->
-    <article class="section-card" id="requisitos" aria-labelledby="sec2-title">
+    <!-- BLOQUE 2: UBICAR Y DESCARGAR EL PROYECTO -->
+    <article class="section-card" id="paso2">
       <div class="section-header">
         <div class="section-number">2</div>
         <div>
-          <h2 class="section-title" id="sec2-title">Requisitos Previos e Instalación</h2>
-          <p class="section-desc">Pasos detallados desde la preparación del entorno hasta la organización de carpetas.</p>
+          <h2 class="section-title">Ubicación y Descarga del Proyecto</h2>
+          <p class="section-desc">Dónde obtener los archivos y recomendaciones para la carpeta de trabajo.</p>
         </div>
       </div>
 
-      <div class="step-list">
-        
-        <!-- PASO 1 -->
-        <section class="step-item" aria-labelledby="paso1-title">
-          <div class="step-item-header">
-            <span class="step-badge">Paso 1</span>
-            <h3 class="step-heading" id="paso1-title">Instalación y Verificación de Python</h3>
-          </div>
-          <div class="step-content">
-            <p>
-              El sistema requiere <strong>Python 3.11.9</strong> para ejecutar el servidor central y todos los módulos.
-            </p>
+      <p>
+        Puede descargar el archivo comprimido del proyecto desde GitHub o utilizar la carpeta provista:
+      </p>
 
-            <h4 style="font-size: 1rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; color: #0369a1;">
-              1. Descarga e Instalación de Python
-            </h4>
-            <p>
-              Descargue el instalador oficial directo correspondiente a la arquitectura de su equipo:
-            </p>
-
-                        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin: 1.25rem 0;">
-              <a class="btn" href="https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe" target="_blank" rel="noopener noreferrer">📥 Descargar Python 3.11.9 (64-bit)</a>
-              <a class="btn" href="https://www.python.org/ftp/python/3.11.9/python-3.11.9.exe" target="_blank" rel="noopener noreferrer">📥 Descargar Python 3.11.9 (32-bit)</a>
-              <div class="loader-bar" title="Servidor listo" style="margin-left: 8px;"></div>
-            </div>
-
-            <div class="callout callout-warning" style="margin: 1.25rem 0;">
-              <span class="callout-icon">⚠️</span>
-              <div>
-                <strong>Paso obligatorio durante la instalación:</strong> En la primera pantalla del instalador de Python, active la casilla inferior <strong>"Add python.exe to PATH"</strong> (Agregar Python a las variables de entorno) antes de presionar <strong>"Install Now"</strong>.
-              </div>
-            </div>
-
-            <!-- Imagen de referencia de instalación borrame1.PNG -->
-            <div style="margin: 1.5rem 0; text-align: center; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;">
-              <img src="borrame1.PNG" alt="Referencia de instalación de Python - Add Python to PATH" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-              <p style="margin-top: 8px; font-size: 0.85rem; color: #64748b; font-weight: 500;">
-                Referencia: Asegúrese de marcar la casilla <strong>"Add python.exe to PATH"</strong> tal como se indica arriba.
-              </p>
-            </div>
-
-            <h4 style="font-size: 1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #0369a1;">
-              2. Comprobación de la Instalación mediante CMD
-            </h4>
-            <p>
-              Una vez concluida la instalación, abra una ventana de comandos de Windows (presione las teclas <kbd>Windows</kbd> + <kbd>R</kbd>, escriba <code>cmd</code> y presione Enter) y ejecute el siguiente comando para verificar:
-            </p>
-
-            <div class="code-wrapper" style="margin-top: 0.75rem;">
-              <div class="code-header">
-                <span class="code-label">Consola de Comandos (CMD)</span>
-                <button type="button" class="copy-btn" data-copy="python --version">📋 Copiar comando</button>
-              </div>
-              <pre><code>python --version</code></pre>
-            </div>
-            <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">
-              Debe responder con <code>Python 3.11.9</code>. Si es así, su sistema ya está listo para el siguiente paso.
-            </p>
-          </div>
-        </section>
-
-        <!-- PASO 2 -->
-        <section class="step-item" aria-labelledby="paso2-title">
-          <div class="step-item-header">
-            <span class="step-badge">Paso 2</span>
-            <h3 class="step-heading" id="paso2-title">Descarga del Proyecto desde GitHub (.ZIP)</h3>
-          </div>
-          <div class="step-content">
-            <p>
-              El código fuente y todos los archivos del sistema se encuentran alojados en el repositorio oficial de GitHub:
-            </p>
-
-            <div style="margin: 1rem 0;">
-              <a class="btn" href="https://github.com/ulises47123/Recurso-Hidricos-Data" target="_blank" rel="noopener noreferrer">🔗 Repositorio: Recurso-Hidricos-Data</a>
-            </div>
-
-            <p><strong>Instrucciones para descargar el archivo comprimido:</strong></p>
-            <ol class="numbered-list" style="margin-left: 1.25rem; margin-top: 0.5rem; margin-bottom: 1rem;">
-              <li style="margin-bottom: 0.5rem;">
-                Ingrese al enlace del repositorio en GitHub indicado arriba.
-              </li>
-              <li style="margin-bottom: 0.5rem;">
-                Ubique el botón verde que dice <strong>"Code"</strong> (o <strong>"Código"</strong>) situado en la parte superior derecha de la lista de archivos.
-              </li>
-              <li style="margin-bottom: 0.5rem;">
-                Haga clic sobre él para desplegar el menú de opciones y seleccione <strong>"Download ZIP"</strong> (Descargar ZIP).
-              </li>
-            </ol>
-
-            <!-- Diagrama visual de referencia -->
-            <div style="background-color: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; margin: 1.25rem 0; font-family: system-ui, sans-serif;">
-              <div style="font-weight: 700; color: #0f172a; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-                📌 Referencia visual en GitHub:
-              </div>
-              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.9rem; color: #334155;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <span style="background-color: #2ea44f; color: #fff; padding: 4px 12px; border-radius: 6px; font-weight: bold; font-size: 0.85rem;">&lt;&gt; Code ▼</span>
-                  <span>➜ Clic en el botón verde desplegable.</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 10px; padding-left: 20px;">
-                  <span style="background-color: #e2e8f0; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.85rem;">📦 Download ZIP</span>
-                  <span>➜ Clic para iniciar la descarga del archivo comprimido.</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="callout callout-warning">
-              <span class="callout-icon">⚠️</span>
-              <div>
-                <strong>Importante:</strong> Asegúrese de que la descarga de <code>Recurso-Hidricos-Data-main.zip</code> finalice al 100% antes de descomprimirlo para evitar archivos incompletos.
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- PASO 3 -->
-        <section class="step-item" aria-labelledby="paso3-title">
-          <div class="step-item-header">
-            <span class="step-badge">Paso 3</span>
-            <h3 class="step-heading" id="paso3-title">Creación de una Cuenta en GitHub</h3>
-          </div>
-          <div class="step-content">
-            <p>
-              GitHub es el servicio en la nube donde se respaldará el código fuente y las configuraciones del proyecto. Si aún no cuenta con un usuario:
-            </p>
-            <ol class="numbered-list">
-              <li>Ingrese al sitio web oficial de GitHub: <a href="https://github.com" target="_blank" rel="noopener noreferrer" style="color: var(--primary); font-weight: 500;">github.com</a>.</li>
-              <li>Haga clic en el botón <strong>"Sign up"</strong> ubicado en la esquina superior derecha.</li>
-              <li>Ingrese su dirección de correo electrónico institucional o personal, defina una contraseña segura y elija un nombre de usuario.</li>
-              <li>Resuelva la verificación de seguridad y confirme el código de validación enviado a su correo electrónico.</li>
-            </ol>
-            <a class="btn" href="https://github.com/signup" target="_blank" rel="noopener noreferrer">🌐 Crear Cuenta en GitHub (Gratis)</a>
-          </div>
-        </section>
-
-        <!-- PASO 4 -->
-        <section class="step-item" aria-labelledby="paso4-title">
-          <div class="step-item-header">
-            <span class="step-badge">Paso 4</span>
-            <h3 class="step-heading" id="paso4-title">Ubicación y Descompresión en "Documentos"</h3>
-          </div>
-          <div class="step-content">
-            <p>
-              Para mantener una ruta limpia y evitar inconvenientes con permisos restringidos de Windows, debe mover el archivo comprimido a su carpeta personal de <strong>Documentos</strong>:
-            </p>
-            <ol class="numbered-list">
-              <li>Copie o traslade el archivo <code>.zip</code> descargado desde la carpeta "Descargas" hacia la carpeta <strong>Documentos</strong> (<code>C:\Usuarios\[Su_Usuario]\Documentos</code>).</li>
-              <li>Haga clic derecho sobre el archivo comprimido y seleccione <strong>"Extraer todo..."</strong> (o utilice su programa descompresor habitual como 7-Zip o WinRAR).</li>
-              <li>Finalice la extracción en esa misma ubicación de Documentos.</li>
-            </ol>
-          </div>
-        </section>
-
-        <!-- PASO 5 -->
-        <section class="step-item" aria-labelledby="paso5-title">
-          <div class="step-item-header">
-            <span class="step-badge">Paso 5</span>
-            <h3 class="step-heading" id="paso5-title">Renombrar la Carpeta Resultante</h3>
-          </div>
-          <div class="step-content">
-            <p>
-              Una vez extraídos los archivos, verifique el nombre de la carpeta contenedora. Debe renombrarla de forma exacta para que coincida con el estándar de trabajo del proyecto:
-            </p>
-            <div class="callout callout-info">
-              <span class="callout-icon">📁</span>
-              <div>
-                Nombre exacto requerido: <strong style="font-size: 1.05rem; color: #0369a1;">recursos hídricos</strong>
-                <br>
-                <small style="color: var(--text-muted);">(En minúsculas, con tilde y espacio: "recursos hídricos")</small>
-              </div>
-            </div>
-            <p>
-              Haga clic derecho sobre la carpeta descomprimida, elija <strong>Cambiar nombre</strong> (o presione la tecla <kbd>F2</kbd>), escriba <code>recursos hídricos</code> y presione <kbd>Enter</kbd>.
-            </p>
-          </div>
-        </section>
-
+      <div style="margin: 1.25rem 0;">
+        <a class="btn" href="https://github.com/ulises47123/Recurso-Hidricos-Data" target="_blank" rel="noopener noreferrer">
+          📦 Ir al Repositorio de GitHub: Recurso-Hidricos-Data
+        </a>
       </div>
+
+      <ol class="numbered-list">
+        <li>En la página de GitHub, haga clic en el botón verde <strong>"&lt;&gt; Code"</strong> y seleccione <strong>"Download ZIP"</strong>.</li>
+        <li>Descomprima la carpeta en su disco local. <em>Recomendación:</em> Ubique la carpeta en una ruta sencilla como el <code>Escritorio</code> o <code>C:\proyectos\recursos-hidricos</code> (evitando rutas con caracteres especiales o acentos que puedan generar bloqueos).</li>
+      </ol>
     </article>
 
-    <!-- SECCIÓN 3: EJECUCIÓN Y CONFIGURACIÓN INICIAL -->
-    <article class="section-card" id="ejecucion" aria-labelledby="sec3-title">
+    <!-- BLOQUE 3: EJECUCIÓN Y PRIMER ARRANQUE -->
+    <article class="section-card" id="paso3">
       <div class="section-header">
         <div class="section-number">3</div>
         <div>
-          <h2 class="section-title" id="sec3-title">Ejecución y Configuración Inicial</h2>
-          <p class="section-desc">Puesta en marcha automática mediante el script de inicio y gestión de privilegios.</p>
+          <h2 class="section-title">Primer Arranque: Ejecutar como Administrador y Firewall</h2>
+          <p class="section-desc">Flujo de inicio desatendido y autorización de red en Windows Defender.</p>
         </div>
       </div>
 
-      <div class="step-list">
-        
-        <div class="step-item">
-          <div class="step-item-header">
-            <span class="step-badge">Acción 1</span>
-            <h3 class="step-heading">Ejecución del Automatizador (.bat)</h3>
-          </div>
-          <div class="step-content">
-            <p>
-              Ingrese a la carpeta <code>recursos hídricos</code>. Dentro encontrará un archivo por lotes con extensión <code>.bat</code> denominado <strong><code>iniciar_sistema.bat</code></strong>.
-            </p>
-            <p>
-              Para iniciar el sistema de manera correcta:
-            </p>
-            <ol class="numbered-list">
-              <li>Haga <strong>clic derecho</strong> sobre el archivo <code>iniciar_sistema.bat</code>.</li>
-              <li>En el menú desplegable, seleccione estrictamente la opción <strong>"Ejecutar como administrador"</strong>.</li>
-            </ol>
-            
-            <div class="callout callout-warning">
-              <span class="callout-icon">🛡️</span>
-              <div>
-                <strong>¿Por qué como administrador?</strong> El script configura automáticamente las reglas del Firewall de Windows para el puerto <code>8000</code> y habilita las resoluciones de dominio local necesarias para el entorno sin requerir configuración manual.
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="step-item">
-          <div class="step-item-header">
-            <span class="step-badge">Acción 2</span>
-            <h3 class="step-heading">Confirmación en la Ventana Emergente de Windows (UAC)</h3>
-          </div>
-          <div class="step-content">
-            <p>
-              Inmediatamente después de ejecutar el archivo, el sistema operativo Windows mostrará la ventana emergente de <em>Control de Cuentas de Usuario (UAC)</em> preguntando: <em>"¿Quieres permitir que esta aplicación haga cambios en el dispositivo?"</em>.
-            </p>
-            <div class="callout callout-success">
-              <span class="callout-icon">✔️</span>
-              <div>
-                Debe hacer clic en el botón <strong>"Sí"</strong> para otorgar los permisos y permitir que el instalador continúe su secuencia sin interrupciones.
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="step-item">
-          <div class="step-item-header">
-            <span class="step-badge">Acción 3</span>
-            <h3 class="step-heading">Descarga Automática de Recursos y Apertura del Sistema</h3>
-          </div>
-          <div class="step-content">
-            <p>
-              Al autorizar la ejecución, se abrirá una consola donde el script llevará a cabo automáticamente los siguientes pasos técnicos:
-            </p>
-            <ul class="numbered-list" style="list-style-type: disc;">
-              <li><strong>Creación del entorno virtual (venv):</strong> Genera un entorno aislado de Python para evitar conflictos con otras aplicaciones de su equipo.</li>
-              <li><strong>Descarga e instalación de dependencias:</strong> Lee el archivo <code>requirements.txt</code> e instala automáticamente FastAPI, Uvicorn y demás librerías requeridas.</li>
-              <li><strong>Habilitación de red:</strong> Añade la regla en el Firewall de Windows para el puerto TCP 8000.</li>
-              <li><strong>Inicio del servidor y panel:</strong> Lanza el servidor backend y el panel de control gráfico de escritorio.</li>
-            </ul>
-
-            <p style="margin-top: 1rem;">
-              Una vez concluido este proceso, el sistema estará operativo localmente. Podrá acceder a la interfaz mediante su navegador web en las siguientes direcciones:
-            </p>
-
-            <div class="table-container">
-              <table class="custom-table">
-                <thead>
-                  <tr>
-                    <th>Ámbito de Acceso</th>
-                    <th>URL de Acceso</th>
-                    <th>Descripción</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>Local (este equipo)</strong></td>
-                    <td><code>https://localhost:8000</code></td>
-                    <td>Acceso directo desde la misma computadora donde corre el servidor.</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Red Institucional / LAN</strong></td>
-                    <td><code>https://recursoshidricos.local:8000</code></td>
-                    <td>Acceso mediante el nombre de host configurado en la red local.</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="callout callout-info">
-              <span class="callout-icon">💡</span>
-              <div>
-                <strong>Nota:</strong> En las ejecuciones posteriores, el script detectará que las librerías ya están instaladas y abrirá el sistema inmediatamente en cuestión de segundos.
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </article>
-
-    <!-- SECCIÓN 4: VINCULACIÓN AUTOMÁTICA CON GITHUB -->
-    <article class="section-card" id="repositorio" aria-labelledby="sec4-title">
-      <div class="section-header">
-        <div class="section-number">4</div>
-        <div>
-          <h2 class="section-title" id="sec4-title">Creación y Vinculación con GitHub</h2>
-          <p class="section-desc">Paso a paso para crear el repositorio público y sincronizarlo sin tocar la consola.</p>
-        </div>
-      </div>
-
-      
-
-      <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; color: #0f172a;">
-        Crear el Repositorio en GitHub (Debe ser Público)
-      </h3>
-      <p style="margin-bottom: 1rem;">
-        Para tener el repositorio en su cuenta o publicar el portal institucional en GitHub Pages:
+      <p>
+        Para poner en marcha el sistema central:
       </p>
-
-      <div class="step-list" style="margin-bottom: 1.5rem;">
-        <div class="step-item">
-          <ol class="numbered-list">
-            <li style="margin-bottom: 0.5rem;"><strong>Iniciar sesión:</strong> Ingrese a <a href="https://github.com/login" target="_blank" rel="noopener noreferrer" style="color: var(--primary); font-weight: 600;">github.com/login</a> con su cuenta.</li>
-            <li style="margin-bottom: 0.5rem;"><strong>Nuevo repositorio:</strong> Haga clic en el botón <strong>"+"</strong> arriba a la derecha y seleccione <strong>"New repository"</strong> (o ingrese a <a href="https://github.com/new" target="_blank" rel="noopener noreferrer" style="color: var(--primary); font-weight: 600;">github.com/new</a>).</li>
-            <li style="margin-bottom: 0.5rem;"><strong>Nombre del repositorio:</strong> En <em>"Repository name"</em> coloque el nombre deseado (por ejemplo: <code>Recurso-Hidricos-Data</code>).</li>
-            <li style="margin-bottom: 0.5rem;"><strong>Visibilidad (OBLIGATORIO PÚBLICO):</strong> Seleccione <strong>Public</strong> (Público). Es necesario para el despliegue de GitHub Pages y el acceso a la web.</li>
-            <li style="margin-bottom: 0.5rem;"><strong>Opciones de inicialización:</strong> <strong style="color: #b91c1c;">¡NO marque casillas adicionales!</strong> Deje desmarcadas <em>"Add a README file"</em>, <em>".gitignore"</em> y <em>"Choose a license"</em>.</li>
-            <li style="margin-bottom: 0.5rem;"><strong>Crear:</strong> Presione el botón verde <strong>"Create repository"</strong>.</li>
-          </ol>
-        </div>
-      </div>
-
-      <!-- Referencia visual -->
-      <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; margin-bottom: 1.5rem; font-family: system-ui, sans-serif;">
-        <div style="font-weight: 700; color: #0f172a; margin-bottom: 8px;">
-          📌 Casillas a verificar en GitHub:
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.92rem; color: #334155;">
-          <div>✅ <strong>Repository name:</strong> Nombre asignado.</div>
-          <div>✅ <strong>Visibilidad:</strong> <strong>🔘 Public</strong> (Público seleccionado).</div>
-          <div>❌ <strong>Add a README file:</strong> Desmarcado.</div>
-        </div>
-      </div>
+      <ol class="numbered-list">
+        <li>Abra la carpeta del proyecto.</li>
+        <li>Haga <strong>clic derecho</strong> sobre el archivo <strong><code>iniciar_sistema.bat</code></strong>.</li>
+        <li>Seleccione estrictamente la opción <strong>"Ejecutar como administrador"</strong>. Esto es necesario para habilitar los puertos en el Firewall y crear el entorno de ejecución sin trabas.</li>
+        <li>Si Windows muestra el aviso de <em>Control de Cuentas de Usuario (UAC)</em>, presione <strong>"Sí"</strong>.</li>
+      </ol>
 
       <div class="callout callout-info">
         <span class="callout-icon">ℹ️</span>
         <div>
-          <strong>Sincronización automática:</strong>
-          Una vez creado el repositorio, el programa se encarga de conectar la carpeta local y sincronizar el contenido desde la interfaz gráfica (pestaña <em>"GitHub & Portal"</em>), sin necesidad de abrir la terminal ni escribir comandos Git.
+          <strong>¿Qué ocurre en la primera ejecución?</strong>
+          Se abrirá una ventana de consola que descarga e instala automáticamente las dependencias en un entorno aislado (<code>venv</code>). 
+          <strong>No cierre la ventana de consola</strong>; este proceso tarda sólo un momento y luego iniciará la aplicación de forma autónoma.
         </div>
+      </div>
+
+      <h3 style="font-size: 1.15rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #0f172a;">
+        Autorización del Firewall de Windows (Paso Obligatorio)
+      </h3>
+      <p>
+        Al iniciarse por primera vez el componente de túnel y red (<code>cloudflared-windows-amd64.exe</code>), Windows Defender Firewall mostrará una ventana emergente de seguridad:
+      </p>
+
+      <!-- Imagen: ventana emergente.PNG -->
+      <div class="figure-container">
+        <img src="ventana emergente.PNG" alt="Alerta de seguridad del Firewall de Windows Defender">
+        <p class="figure-caption">
+          <strong>Alerta de Seguridad de Windows Defender:</strong> En esta ventana debe <strong>marcar todas las casillas disponibles</strong> (especialmente <em>"Redes privadas"</em> y <em>"Redes públicas"</em> si aplica) y hacer clic en el botón <strong>"Permitir acceso"</strong> para que el servidor pueda comunicarse por la red.
+        </p>
+      </div>
+    </article>
+
+    <!-- BLOQUE 4: PANEL CENTRAL DE CONTROL DPRH -->
+    <article class="section-card" id="paso4">
+      <div class="section-header">
+        <div class="section-number">4</div>
+        <div>
+          <h2 class="section-title">Panel de Control: Servidor Central DPRH</h2>
+          <p class="section-desc">Administración gráfica de conexiones de red, túnel de internet y acceso directo al sistema.</p>
+        </div>
+      </div>
+
+      <p>
+        Una vez completado el inicio, se abrirá la ventana principal de la aplicación: 
+        <strong>"Gestión de Personal - Servidor Central DPRH"</strong>.
+      </p>
+
+      <h3 style="font-size: 1.15rem; font-weight: 700; margin-top: 1.25rem; margin-bottom: 0.5rem; color: #0f172a;">
+        Pestaña: Red & Acceso Remoto
+      </h3>
+      <p>
+        Esta pantalla le brinda acceso inmediato al software sin necesidad de configurar nada manualmente:
+      </p>
+      <ul class="numbered-list" style="list-style-type: disc;">
+        <li><strong>Botón superior "ABRIR SISTEMA EN EL NAVEGADOR WEB":</strong> Abre la plataforma institucional directamente en su navegador predeterminado.</li>
+        <li><strong>Direcciones de Conexión Local (LAN):</strong> Enlaces seguros para que otras computadoras de la oficina conecten por la red interna (ej. <code>https://recursoshidricos.local:8000</code>).</li>
+        <li><strong>Acceso Remoto por Internet (Cloudflare):</strong> Muestra si el túnel está activo, el enlace remoto asignado y los botones <em>"Iniciar Túnel"</em>, <em>"Detener Túnel"</em> y <em>"Copiar URL Remota"</em>.</li>
+      </ul>
+
+      <!-- Imagen: pantalla de red y acceso.PNG -->
+      <div class="figure-container">
+        <img src="pantalla de red y acceso.PNG" alt="Panel de control: Pestaña Red y Acceso Remoto">
+        <p class="figure-caption">
+          <strong>Referencia ilustrativa del Panel:</strong> Así se visualiza el estado del servidor activo en el puerto 8000, los enlaces de red local y la dirección de acceso por Internet generada por el túnel.
+        </p>
+      </div>
+    </article>
+
+    <!-- BLOQUE 5: CONFIGURACIÓN CON GITHUB Y DEPLOY KEYS -->
+    <article class="section-card" id="paso5">
+      <div class="section-header">
+        <div class="section-number">5</div>
+        <div>
+          <h2 class="section-title">Vinculación con GitHub: Repositorio Propio y Llaves Públicas</h2>
+          <p class="section-desc">Cómo desvincular el repo de ejemplo, registrar su nuevo repositorio y configurar la Deploy Key.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-warning">
+        <span class="callout-icon">📌</span>
+        <div>
+          <strong>¡Atención con el Repositorio!</strong>
+          En la pestaña <em>"GitHub & Portal"</em> vendrá precargada la URL de un repositorio de ejemplo o previo. 
+          <strong>Usted debe borrarlo, colocar el enlace de su propio repositorio creado y generar una nueva llave pública SSH</strong> utilizando los botones que provee la aplicación.
+        </div>
+      </div>
+
+      <h3 style="font-size: 1.15rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #0f172a;">
+        1. Crear su Repositorio en GitHub y obtener el Enlace
+      </h3>
+      <ol class="numbered-list">
+        <li>Ingrese a su cuenta en <a href="https://github.com/new" target="_blank" rel="noopener noreferrer" style="color: var(--primary); font-weight: 600;">github.com/new</a>.</li>
+        <li>Asigne un nombre a su repositorio y seleccione obligatoriamente <strong>Public</strong> (Público). <em>No marque README ni plantillas</em>.</li>
+        <li>Una vez creado el repositorio, haga clic en el botón verde <strong>"&lt;&gt; Code"</strong>, asegúrese de estar en la pestaña <strong>HTTPS</strong> y copie el enlace provisto:</li>
+      </ol>
+
+      <!-- Imagen: donde sacar el link del repo que crearon es desde code y se despliega eso .PNG -->
+      <div class="figure-container">
+        <img src="donde sacar el link del repo que crearon es desde code y se despliega eso .PNG" alt="Cómo obtener el enlace del repositorio desde Code">
+        <p class="figure-caption">
+          <strong>Ejemplo ilustrativo de GitHub:</strong> Al presionar <strong>"&lt;&gt; Code"</strong> se despliega el menú con la URL HTTPS de su nuevo repositorio. Copie ese enlace con el botón lateral.
+        </p>
+      </div>
+
+      <h3 style="font-size: 1.15rem; font-weight: 700; margin-top: 1.75rem; margin-bottom: 0.5rem; color: #0f172a;">
+        2. Pegar la URL y Generar Nueva Llave en el Panel DPRH
+      </h3>
+      <p>
+        Regrese a la aplicación en su computadora y seleccione la pestaña <strong>"GitHub & Portal"</strong>:
+      </p>
+      <ol class="numbered-list">
+        <li>En el campo <strong>"URL del Repositorio GitHub"</strong>, reemplace la dirección anterior pegando la URL de su nuevo repositorio y pulse <strong>"Guardar URL"</strong>.</li>
+        <li>Haga clic en el botón naranja <strong>"Restablecer / Generar Nueva Llave"</strong> para crear un par de llaves SSH limpias y exclusivas para su equipo.</li>
+        <li>Haga clic en el botón <strong>"Copiar Llave Pública"</strong> para tenerla lista en el portapapeles.</li>
+      </ol>
+
+      <!-- Imagen: pantalla git hubPNG.PNG -->
+      <div class="figure-container">
+        <img src="pantalla git hubPNG.PNG" alt="Pestaña GitHub y Portal en el Panel del Servidor">
+        <p class="figure-caption">
+          <strong>Pestaña GitHub & Portal del Panel:</strong> Muestra el campo para ingresar la URL del repositorio, el botón naranja para generar la nueva llave pública y el botón para copiarla.
+        </p>
+      </div>
+
+      <h3 style="font-size: 1.15rem; font-weight: 700; margin-top: 1.75rem; margin-bottom: 0.5rem; color: #0f172a;">
+        3. Agregar la Llave Pública (Deploy Key) en GitHub
+      </h3>
+      <p>
+        Para que el software tenga autorización de sincronizar con su repositorio en GitHub:
+      </p>
+      <ol class="numbered-list">
+        <li>Vaya a su repositorio en la web de GitHub y haga clic en la pestaña <strong>"Settings"</strong> (Configuración) arriba a la derecha.</li>
+        <li>En el menú lateral izquierdo, baje hasta la sección <em>Security and quality</em> y haga clic en <strong>"Deploy keys"</strong>:</li>
+      </ol>
+
+      <!-- Imagen: git ajustes menu deloveper.PNG -->
+      <div class="figure-container">
+        <img src="git ajustes menu deloveper.PNG" alt="Menú lateral de Settings en GitHub con Deploy keys">
+        <p class="figure-caption">
+          <strong>Menú de Configuración de GitHub:</strong> Ubique la opción <strong>"Deploy keys"</strong> resaltada en el lateral izquierdo.
+        </p>
+      </div>
+
+      <ol class="numbered-list" start="3">
+        <li>En la pantalla de Deploy keys, presione el botón azul <strong>"Add deploy key"</strong>:</li>
+      </ol>
+
+      <!-- Imagen: ajustes deloveper para agregar la llave.PNG -->
+      <div class="figure-container">
+        <img src="ajustes deloveper para agregar la llave.PNG" alt="Botón Add deploy key en GitHub">
+        <p class="figure-caption">
+          <strong>Pantalla de Deploy keys:</strong> Presione el botón superior derecho <strong>"Add deploy key"</strong> para registrar una nueva autorización.
+        </p>
+      </div>
+
+      <ol class="numbered-list" start="4">
+        <li>En el formulario que aparece:
+          <ul style="margin-left: 1.25rem; margin-top: 0.25rem;">
+            <li>En <strong>Title</strong> escriba un nombre identificador (por ejemplo: <code>Servidor DPRH</code>).</li>
+            <li>En <strong>Key</strong> pegue el texto de la llave que copió desde el panel.</li>
+            <li><strong style="color: #b91c1c;">PASO CRÍTICO:</strong> Marque obligatoriamente la casilla <strong>"Allow write access"</strong> (Permitir acceso de escritura).</li>
+            <li>Haga clic en el botón azul <strong>"Add key"</strong> para guardar.</li>
+          </ul>
+        </li>
+      </ol>
+
+      <!-- Imagen: agrega la llave del  publico  aun estamos en git hub  y marcar la casilla .PNG -->
+      <div class="figure-container">
+        <img src="agrega la llave del  publico  aun estamos en git hub  y marcar la casilla .PNG" alt="Formulario para agregar llave pública y marcar Allow write access">
+        <p class="figure-caption">
+          <strong>Formulario de Deploy Key en GitHub:</strong> Pegue la llave pública y asegúrese de que la casilla <strong>"Allow write access"</strong> quede activada antes de pulsar <em>"Add key"</em>.
+        </p>
+      </div>
+
+      <h3 style="font-size: 1.15rem; font-weight: 700; margin-top: 1.75rem; margin-bottom: 0.5rem; color: #0f172a;">
+        4. Verificación y Sincronización Inmediata
+      </h3>
+      <p>
+        Una vez agregada la llave en GitHub:
+      </p>
+      <ol class="numbered-list">
+        <li>En el panel DPRH, presione el botón <strong>"Probar Conexión con GitHub"</strong>. El indicador cambiará a <em>"• Señal Verde: Conexión establecida con éxito."</em>.</li>
+        <li>Presione el botón <strong>"Forzar Sincronización Inmediata a GitHub Pages"</strong> para subir la web del portal de manera 100% automática y sin escribir una sola línea de comandos en la terminal.</li>
+      </ol>
+    </article>
+
+    <!-- BLOQUE 6: CHECKLIST FINAL -->
+    <article class="section-card">
+      <div class="section-header">
+        <div class="section-number">✓</div>
+        <div>
+          <h2 class="section-title">Checklist Resumida de Puesta en Marcha</h2>
+          <p class="section-desc">Repaso rápido de los pasos para confirmar que el sistema quedó operativo.</p>
+        </div>
+      </div>
+
+      <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 20px;">
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 0.98rem; color: #334155;">
+          <li>✅ <strong>1. Python instalado:</strong> Python 3.11.9 instalado marcando la casilla <em>"Add python.exe to PATH"</em>.</li>
+          <li>✅ <strong>2. Ejecutar como Administrador:</strong> Clic derecho sobre <code>iniciar_sistema.bat</code> &gt; <em>"Ejecutar como administrador"</em>.</li>
+          <li>✅ <strong>3. Firewall aceptado:</strong> En la ventana de Windows Defender, marcar las casillas y pulsar <em>"Permitir acceso"</em>.</li>
+          <li>✅ <strong>4. Repositorio configurado:</strong> Crear nuevo repo en GitHub (Público), copiar enlace desde <em>"&lt;&gt; Code"</em> y pegarlo en el panel.</li>
+          <li>✅ <strong>5. Llave pública vinculada:</strong> Generar nueva llave en el panel, pegarla en <em>Settings &gt; Deploy keys</em> de GitHub con <em>"Allow write access"</em> marcado.</li>
+          <li>✅ <strong>6. Sistema en funcionamiento:</strong> Probar conexión en verde y presionar <em>"ABRIR SISTEMA EN EL NAVEGADOR WEB"</em>.</li>
+        </ul>
       </div>
     </article>
 
   </main>
 
-  <!-- =====================================================================
-       FOOTER
-       ===================================================================== -->
-  <footer class="site-footer" role="contentinfo">
-    <div class="footer-container">
-      <div class="footer-left">
-        <p><strong>Manual de Usuario y Configuración Técnica</strong> — Recursos Hídricos</p>
-        <p>Diseñado con estándares de alta legibilidad, accesibilidad y diseño limpio.</p>
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div style="max-width: var(--container-max-w); margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;">
+      <div style="text-align: left;">
+        <p><strong>Dirección Provincial de Recursos Hídricos (DPRH)</strong></p>
+        <p style="font-size: 0.85rem; color: #64748b;">Manual técnico integral de puesta en marcha y control de versiones.</p>
       </div>
       <div>
-        <a href="#inicio" class="back-to-top">▲ Volver al inicio</a>
+        <a href="#inicio" style="text-decoration: none; color: var(--primary); font-weight: 700;">▲ Volver al inicio</a>
       </div>
     </div>
   </footer>
 
-  <!-- =====================================================================
-       JAVASCRIPT: INTERACTIVIDAD Y COPIADO DE COMANDOS
-       ===================================================================== -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // 1. Funcionalidad de botones para copiar comandos
-      const copyButtons = document.querySelectorAll('.copy-btn');
-      copyButtons.forEach(button => {
-        button.addEventListener('click', async () => {
-          const textToCopy = button.getAttribute('data-copy');
-          if (!textToCopy) return;
-
-          try {
-            await navigator.clipboard.writeText(textToCopy);
-            const originalText = button.innerHTML;
-            button.classList.add('copied');
-            button.innerHTML = '✓ ¡Copiado!';
-
-            setTimeout(() => {
-              button.classList.remove('copied');
-              button.innerHTML = originalText;
-            }, 2000);
-          } catch (err) {
-            console.error('Error al intentar copiar al portapapeles:', err);
-            // Fallback con selección manual
-            const textarea = document.createElement('textarea');
-            textarea.value = textToCopy;
-            textarea.style.position = 'fixed';
-            textarea.style.opacity = '0';
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
-
-            button.classList.add('copied');
-            button.innerHTML = '✓ ¡Copiado!';
-            setTimeout(() => {
-              button.classList.remove('copied');
-              button.innerHTML = '📋 Copiar comando';
-            }, 2000);
-          }
-        });
-      });
-
-      // 2. Menú de navegación adaptable para dispositivos móviles
-      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-      const navLinks = document.getElementById('navLinks');
-
-      if (mobileMenuBtn && navLinks) {
-        mobileMenuBtn.addEventListener('click', () => {
-          const isExpanded = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
-          mobileMenuBtn.setAttribute('aria-expanded', !isExpanded);
-          navLinks.classList.toggle('open');
-        });
-
-        // Cerrar menú al hacer clic en un enlace de navegación
-        navLinks.querySelectorAll('.nav-link').forEach(link => {
-          link.addEventListener('click', () => {
-            navLinks.classList.remove('open');
-            mobileMenuBtn.setAttribute('aria-expanded', 'false');
-          });
-        });
-      }
-
-      // 3. Resaltar enlace activo según scroll de la página
-      const sections = document.querySelectorAll('article.section-card, section.hero-banner');
-      const navItems = document.querySelectorAll('.nav-link');
-
-      window.addEventListener('scroll', () => {
-        let currentSectionId = '';
-        const scrollPosition = window.scrollY + 120;
-
-        sections.forEach(section => {
-          const sectionTop = section.offsetTop;
-          const sectionHeight = section.offsetHeight;
-          if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-            currentSectionId = section.getAttribute('id');
-          }
-        });
-
-        navItems.forEach(item => {
-          item.classList.remove('active');
-          if (item.getAttribute('href') === `#${currentSectionId}`) {
-            item.classList.add('active');
-          }
-        });
-      });
-    });
-  </script>
 </body>
 </html>
